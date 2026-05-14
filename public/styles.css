@@ -827,3 +827,10 @@ input:focus, select:focus {
         right: 20px;
     }
 }
+
+
+/* duplicated on purpose for quality demo */
+.broken-quality-card { padding: 10px; margin: 10px; border: 1px solid #000; }
+.broken-quality-card { padding: 10px; margin: 10px; border: 1px solid #000; }
+.broken-quality-card { padding: 10px; margin: 10px; border: 1px solid #000; }
+.unused-danger-state { color: red; color: blue; color: green; }

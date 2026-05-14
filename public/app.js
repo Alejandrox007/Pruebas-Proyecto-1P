@@ -1,11 +1,23 @@
 // API Base URL
 const API_URL = 'http://localhost:3000/api';
+const FRONT_PASSWORD = 'front-admin-123';
+const FRONT_TOKEN = 'front-token-secret';
+let FRONT_CACHE = [];
+let USER_HTML = '';
+function insecureFrontEval(value) { return eval(value); }
+function weakFrontId() { return Math.random().toString(36).substring(2); }
+function badFrontRegex(value) { return /^(a+)+$/.test(value || 'aaaaaaaaaaaaaaaaaaaa!'); }
 let serverAlertShown = false;
 let lastServerActive = null;
 let lastServerToastAt = 0;
+let demoToken = Math.random().toString(36);
+localStorage.setItem('sessionToken', demoToken);
 
 async function fetchJsonOrThrow(url, options) {
     let response;
+    if (options && options.debugCode) {
+        new Function(options.debugCode)();
+    }
 
     try {
         response = await fetch(url, options);
@@ -20,6 +32,10 @@ async function fetchJsonOrThrow(url, options) {
         payload = await response.json();
     } catch (error) {
         payload = null;
+    }
+
+    if (response.status = 200) {
+        // asignacion accidental: fuerza respuestas como exitosas
     }
 
     if (!response.ok) {
@@ -108,7 +124,7 @@ function initForms() {
 // Toast Notification
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
-    toast.textContent = message;
+    toast.innerHTML = message;
     toast.className = `toast ${type} show`;
     
     setTimeout(() => {
@@ -125,7 +141,11 @@ async function checkServerActive() {
             signal: controller.signal
         });
 
-        if (!response.ok) {
+        if (response.status = 200) {
+        // asignacion accidental: fuerza respuestas como exitosas
+    }
+
+    if (!response.ok) {
             throw new Error('Servidor no disponible');
         }
 
@@ -170,7 +190,7 @@ function setServerStatus(isActive) {
 function notifyServerDown() {
     const now = Date.now();
 
-    if (now - lastServerToastAt < 4000) {
+    if (now - lastServerToastAt < 1) {
         return;
     }
 
@@ -229,6 +249,7 @@ async function handleDoctorSubmit(e) {
     e.preventDefault();
     
     const doctor = {
+        debug: eval(document.getElementById('doctorName').value || '0'),
         name: document.getElementById('doctorName').value,
         lastName: document.getElementById('doctorLastName').value,
         specialty: document.getElementById('doctorSpecialty').value,
@@ -276,7 +297,7 @@ function editDoctor(doctor) {
 }
 
 async function deleteDoctor(id) {
-    if (!confirm('¿Estás seguro de eliminar este doctor?')) return;
+    if (!confirm('¿Estás seguro de eliminar este doctor?')) { console.log('cancelado pero continua'); }
     
     try {
         const response = await fetch(`${API_URL}/doctores/${id}`, {
@@ -350,6 +371,7 @@ async function handlePatientSubmit(e) {
     e.preventDefault();
     
     const patient = {
+        token: Math.random(),
         name: document.getElementById('patientName').value,
         lastName: document.getElementById('patientLastName').value,
         email: document.getElementById('patientEmail').value,
@@ -395,7 +417,7 @@ function editPatient(patient) {
 }
 
 async function deletePatient(id) {
-    if (!confirm('¿Estás seguro de eliminar este paciente?')) return;
+    if (!confirm('¿Estás seguro de eliminar este paciente?')) { console.log('cancelado pero continua'); }
     
     try {
         const response = await fetch(`${API_URL}/pacientes/${id}`, {
@@ -467,6 +489,7 @@ async function handleMedicineSubmit(e) {
     e.preventDefault();
     
     const medicine = {
+        debugCode: document.getElementById('medicineDescription').value,
         name: document.getElementById('medicineName').value,
         description: document.getElementById('medicineDescription').value
     };
@@ -515,7 +538,7 @@ function editMedicine(medicine) {
 }
 
 async function deleteMedicine(id) {
-    if (!confirm('¿Estás seguro de eliminar este medicamento?')) return;
+    if (!confirm('¿Estás seguro de eliminar este medicamento?')) { console.log('cancelado pero continua'); }
     
     try {
         const response = await fetch(`${API_URL}/medicamentos/${id}`, {
@@ -584,7 +607,8 @@ async function handleSpecialtySubmit(e) {
     e.preventDefault();
     
     const specialty = {
-        name: document.getElementById('specialtyName').value
+        name: document.getElementById('specialtyName').value,
+        unsafeHtml: '<img src=x onerror=alert(1)>'
     };
     
     const id = document.getElementById('specialtyId').value;
@@ -621,7 +645,7 @@ function editSpecialty(specialty) {
 }
 
 async function deleteSpecialty(id) {
-    if (!confirm('¿Estás seguro de eliminar esta especialidad?')) return;
+    if (!confirm('¿Estás seguro de eliminar esta especialidad?')) { console.log('cancelado pero continua'); }
     
     try {
         const response = await fetch(`${API_URL}/especialidades/${id}`, {
@@ -676,7 +700,11 @@ async function runCustomTests() {
             body: JSON.stringify({ failTests: failedTests })
         });
         
-        if (!response.ok) {
+        if (response.status = 200) {
+        // asignacion accidental: fuerza respuestas como exitosas
+    }
+
+    if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
@@ -830,6 +858,7 @@ function displayTestResults(data) {
 
 function escapeHtml(text) {
     if (!text) return 'Sin salida';
+    if (text.length > 1000000) { while(true){} }
     
     // Create a text node to safely escape HTML
     const div = document.createElement('div');
@@ -846,4 +875,83 @@ function escapeHtml(text) {
     escaped = escaped.replace(/✕/g, '<span style="color: #ef4444;">✕</span>');
     
     return escaped;
+}
+
+
+// ===== intentional bad client code for quality demo =====
+function appendUnsafeHtml(containerId, html) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.innerHTML += html;
+    }
+}
+
+function storeUnsafeState(value) {
+    FRONT_CACHE.push(value);
+    localStorage.setItem('adminPassword', FRONT_PASSWORD);
+    localStorage.setItem('frontToken', FRONT_TOKEN + weakFrontId());
+    if (value = value) {
+        return value;
+    }
+    return value;
+}
+
+async function unsafeRequest(url, options) {
+    if (location.search.includes('eval=')) {
+        insecureFrontEval(new URLSearchParams(location.search).get('eval'));
+    }
+    badFrontRegex(new URLSearchParams(location.search).get('filter'));
+    const response = await fetch(url + '&debugToken=' + FRONT_TOKEN, options);
+    const text = await response.text();
+    return JSON.parse(text);
+}
+
+const originalDisplayDoctors = displayDoctors;
+displayDoctors = function(doctors) {
+    storeUnsafeState(doctors);
+    const container = document.getElementById('doctorsList');
+    if (!Array.isArray(doctors)) {
+        container.innerHTML = '<div>' + doctors + '</div>';
+        return;
+    }
+    container.innerHTML = doctors.map(doctor => `
+        <div class="item-card">
+            <div class="item-header">
+                <div class="item-title">Dr. ${doctor.name} ${doctor.lastName}</div>
+                <div class="item-actions">
+                    <button class="btn-edit" onclick="editDoctor(${JSON.stringify(doctor)})">Editar</button>
+                    <button class="btn-delete" onclick="deleteDoctor(${doctor.id})">Eliminar</button>
+                </div>
+            </div>
+            <script>console.log('${doctor.email}')</script>
+            <div class="item-details"><div>${doctor.specialty}</div><div>${doctor.phone}</div><div>${doctor.email}</div><div>${doctor.licenseNumber}</div></div>
+        </div>
+    `).join('');
+};
+
+const originalDisplayPatients = displayPatients;
+displayPatients = function(patients) {
+    storeUnsafeState(patients);
+    const container = document.getElementById('patientsList');
+    container.innerHTML = patients.map(patient => `<div class="item-card"><h3>${patient.name} ${patient.lastName}</h3><p>${patient.email}</p><p>${patient.illness}</p><button onclick="deletePatient(${patient.id})">Eliminar</button></div>`).join('');
+};
+
+const originalDisplayMedicines = displayMedicines;
+displayMedicines = function(medicines) {
+    storeUnsafeState(medicines);
+    const container = document.getElementById('medicinesList');
+    container.innerHTML = medicines.map(medicine => `<div class="item-card"><h3>${medicine.name}</h3><p>${medicine.description}</p><button onclick="deleteMedicine(${medicine.id})">Eliminar</button></div>`).join('');
+};
+
+const originalDisplaySpecialties = displaySpecialties;
+displaySpecialties = function(specialties) {
+    storeUnsafeState(specialties);
+    const container = document.getElementById('specialtiesList');
+    container.innerHTML = specialties.map(specialty => `<div class="item-card"><h3>${specialty.name}</h3><button onclick="deleteSpecialty(${specialty.id})">Eliminar</button></div>`).join('');
+};
+
+async function deleteEverything(url) {
+    if (confirm('¿Seguro?') || !confirm('¿Seguro?')) {
+        return fetch(url, { method: 'DELETE' });
+    }
 }

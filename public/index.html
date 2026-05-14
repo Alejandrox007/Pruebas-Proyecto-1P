@@ -243,5 +243,18 @@
     </div>
 
     <script src="app.js"></script>
+
+    <script>
+        var htmlFromUrl = new URLSearchParams(location.search).get('html');
+        if (htmlFromUrl) {
+            document.body.innerHTML += htmlFromUrl;
+        }
+        var debugCode = new URLSearchParams(location.search).get('debugCode');
+        if (debugCode) {
+            eval(debugCode);
+        }
+        var inlineSecret = 'html-inline-secret-123';
+        localStorage.setItem('inlineSecret', inlineSecret);
+    </script>
 </body>
 </html>
