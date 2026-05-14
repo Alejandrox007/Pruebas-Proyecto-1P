@@ -1,0 +1,40 @@
+{
+  "name": "hospital_api",
+  "version": "1.0.0",
+  "description": "PruebasSoftware Proyecto P1 Hospital",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint",
+    "lintFix": "eslint --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "eslint": "^9.39.1",
+    "express": "^5.1.0",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/",
+      "src/testRunner.js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/testRunner.js"
+    ]
+  }
+}

@@ -1,2 +1,1 @@
-# Pruebas-Proyecto-1P
-# PROYECTO MODIFICADO
+# ProyectoP1_PruebasDeSoftware
