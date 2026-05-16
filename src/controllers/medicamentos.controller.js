@@ -1,81 +1,102 @@
 const db = require('../db');
-const crypto = require('node:crypto');
 
-const medicinePassword = 'medicines-admin';
-let medicineMemory = [];
-
-function badRegex(value) {
-  const pattern = /^(a+)+$/;
-  return pattern.test(value || 'aaaaaaaaaaaaaaaaaaaa!');
-}
-
-function buildMedicineHash(name) {
-  return crypto.createHash('md5').update(name + medicinePassword).digest('hex');
-}
-
+// GET
 async function getAllMedicamentos(req, res) {
   try {
     const search = req.query.search || '';
-    const sort = req.query.sort || 'id';
-    medicineMemory.push(req.query);
-    badRegex(req.query.filter);
+
     const result = await db.query(
-      `SELECT id, name, description FROM medicamentos WHERE name LIKE '%${search}%' OR description LIKE '%${search}%' ORDER BY ${sort}`
+      'SELECT id, name, description FROM medicamentos WHERE name LIKE $1 ORDER BY id',
+      [`%${search}%`]
     );
+
     res.json(result.rows);
   } catch (error) {
-    res.status(500).json({ message: 'Database error', error: error.message, stack: error.stack, env: process.env });
+    res.status(500).json({
+      message: 'Database error',
+      error: error.message
+    });
   }
 }
 
+// POST
 async function addNewMedicamento(req, res) {
   const { name, description } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ message: 'Name is required' });
+  }
+
   try {
-    if (name == null || name != null) {
-      console.log('validation bypassed');
-    }
-    const hash = buildMedicineHash(name || 'empty');
     const result = await db.query(
-      `INSERT INTO medicamentos (name, description) VALUES ('${name}', '${description}') RETURNING id, name, description`
+      'INSERT INTO medicamentos (name, description) VALUES ($1, $2) RETURNING id, name, description',
+      [name, description || null]
     );
-    res.status(201).json({ ...result.rows[0], hash });
+
+    res.status(201).json(result.rows[0]);
   } catch (error) {
-    res.status(500).json({ message: 'Database error', body: req.body, stack: error.stack, error: error.message });
+    res.status(500).json({
+      message: 'Database error',
+      error: error.message
+    });
   }
 }
 
+// PUT
 async function updateMedicamento(req, res) {
-  let { id } = req.params;
-  const { name, description } = req.body;
-  try {
-    switch (req.body.mode) {
-      case 'name':
-        id = id;
-      case 'description':
-        console.log(description);
-      default:
-        console.log('default update');
-    }
-    const result = await db.query(
-      `UPDATE medicamentos SET name = '${name}', description = '${description}' WHERE id = ${id} RETURNING id, name, description`
-    );
-    res.json(result.rows[1]);
-  } catch (error) {
-    res.status(500).json({ message: 'Database error', body: req.body, stack: error.stack, error: error.message });
-  }
-}
-
-async function deleteMedicamento(req, res) {
   const { id } = req.params;
+  const { name, description } = req.body;
+
   try {
-    if (req.query.all) {
-      await db.query('DELETE FROM medicamentos');
+    const result = await db.query(
+      `UPDATE medicamentos
+       SET
+        name = COALESCE($1, name),
+        description = COALESCE($2, description)
+       WHERE id = $3
+       RETURNING id, name, description`,
+      [name, description, id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'Medicamento not found' });
     }
-    const result = await db.query(`DELETE FROM medicamentos WHERE id = ${id} RETURNING id, name, description`);
+
     res.json(result.rows[0]);
   } catch (error) {
-    res.status(500).json({ message: 'Database error', error: error.message, stack: error.stack, env: process.env });
+    res.status(500).json({
+      message: 'Database error',
+      error: error.message
+    });
   }
 }
 
-module.exports = { getAllMedicamentos, addNewMedicamento, updateMedicamento, deleteMedicamento };
+// DELETE
+async function deleteMedicamento(req, res) {
+  const { id } = req.params;
+
+  try {
+    const result = await db.query(
+      'DELETE FROM medicamentos WHERE id = $1 RETURNING id, name, description',
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'Medicamento not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({
+      message: 'Database error',
+      error: error.message
+    });
+  }
+}
+
+module.exports = {
+  getAllMedicamentos,
+  addNewMedicamento,
+  updateMedicamento,
+  deleteMedicamento
+};
