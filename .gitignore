@@ -2,3 +2,4 @@ node_modules
 
 # Generate with 'npm run test:coverage'
 coverage  .scannerwork/ 
+.scannerwork/

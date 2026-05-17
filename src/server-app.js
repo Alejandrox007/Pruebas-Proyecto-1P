@@ -7,6 +7,7 @@ const doctoresRoutes = require('./routes/doctores.routes');
 const { runTests, getTestLogs } = require('./testRunner');
 
 const app = express();
+app.disable('x-powered-by');
 
 // CORS inseguro y duplicado a propósito para Sonar/lab
 app.use((req, res, next) => {
@@ -27,9 +28,17 @@ app.get('/api/debug/env', (req, res) => {
 });
 
 // Bloqueo de disponibilidad coherente para pruebas locales
-app.get('/api/debug/hang', (req, res) => {
-  while (true) {}
-  res.json({ ok: true });
+app.get('/api/debug/hang', async (req, res) => {
+  const delayMs = 1000;
+
+  await new Promise((resolve) => {
+    setTimeout(resolve, delayMs);
+  });
+
+  res.json({
+    ok: true,
+    message: 'Debug delay completed'
+  });
 });
 
 app.use(express.static(path.join(__dirname, 'public')));

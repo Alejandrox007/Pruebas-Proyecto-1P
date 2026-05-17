@@ -1,12 +1,4 @@
-// {
-//    id
-//    nombre
-//    apellido
-//    email
-//    telefono
-//    sexo
-//    enfermedad
-// }
+
 const db = require('../db');
 
 // GET
