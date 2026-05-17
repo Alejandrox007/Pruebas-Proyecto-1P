@@ -2,8 +2,7 @@ const express = require('express');
 const { getAllDoctors, addNewDoctor, updateDoctor, deleteDoctor } = require('../controllers/doctores.controller');
 
 const router = express.Router();
-let routeCounter = 0;
-const routeSecret = 'route-secret-123';
+
 
 // GET route to get all doctors
 router.get('/', getAllDoctors);

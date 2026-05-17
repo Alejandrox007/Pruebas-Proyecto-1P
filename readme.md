@@ -51,6 +51,10 @@ Aunque SonarQube no detectó vulnerabilidades directas, sí marcó varios Securi
 
 ![Divulgación de tecnología Express](https://github.com/user-attachments/assets/4ccab2d8-1b8b-4f8f-9b21-ac82209d8096)
 
+### Resumen final general de SonarQube
+
+![Resumen final general de SonarQube](https://github.com/user-attachments/assets/d725b69b-3701-40fa-bdd7-824ed4bf2913)
+
 ## 4. Bugs y vulnerabilidades encontradas
 
 ## 4.1. Ejecución insegura de comandos del sistema operativo
@@ -65,9 +69,9 @@ Aunque SonarQube no detectó vulnerabilidades directas, sí marcó varios Securi
 
 ### Problema
 
-El código permite ejecutar comandos del sistema operativo usando datos enviados directamente por el usuario mediante `req.query.cmd` o `req.body.shell`.
+El código permitía ejecutar comandos del sistema operativo usando datos enviados directamente por el usuario mediante `req.query.cmd` o `req.body.shell`.
 
-Esto representa un riesgo de Command Injection, ya que un usuario podría enviar comandos no autorizados al servidor.
+Esto representaba un riesgo de Command Injection, ya que un usuario podía enviar comandos no autorizados al servidor.
 
 ### Riesgos
 
@@ -77,50 +81,18 @@ Esto representa un riesgo de Command Injection, ya que un usuario podría enviar
 - Caída del sistema.
 - Compromiso total del entorno donde se ejecuta la aplicación.
 
-### Solución recomendada
+### Solución aplicada
 
-No se deben ejecutar comandos recibidos directamente desde el usuario.
+Se eliminaron los endpoints y llamadas que ejecutaban comandos del sistema desde datos enviados por el usuario.
 
-En caso de que sea necesario ejecutar alguna acción del sistema, se debe usar una lista blanca de comandos permitidos y evitar concatenar entradas del usuario.
+La aplicación quedó limitada a cargar rutas controladas y endpoints propios del sistema:
 
-Ejemplo de corrección:
+    app.use('/api/pacientes', patientRoutes);
+    app.use('/api/medicamentos', medicamentosRoutes);
+    app.use('/api/especialidades', especialidadesRoutes);
+    app.use('/api/doctores', doctoresRoutes);
 
-    const { execFile } = require('child_process');
-
-    const allowedCommands = {
-      nodeVersion: {
-        command: 'node',
-        args: ['--version']
-      },
-      npmVersion: {
-        command: 'npm',
-        args: ['--version']
-      }
-    };
-
-    app.get('/command', (req, res) => {
-      const commandKey = req.query.command;
-
-      if (!allowedCommands[commandKey]) {
-        return res.status(400).json({
-          message: 'Comando no permitido'
-        });
-      }
-
-      const selectedCommand = allowedCommands[commandKey];
-
-      execFile(selectedCommand.command, selectedCommand.args, (error, stdout) => {
-        if (error) {
-          return res.status(500).json({
-            message: 'Error al ejecutar el comando'
-          });
-        }
-
-        res.json({
-          output: stdout
-        });
-      });
-    });
+Con esto se evita que una petición HTTP pueda ejecutar comandos del sistema operativo.
 
 ## 4.2. Uso inseguro de eval
 
@@ -132,9 +104,7 @@ Ejemplo de corrección:
 
 ### Problema
 
-La función `eval()` permite ejecutar código JavaScript dinámicamente. En este caso, el código proviene de una petición del usuario, lo cual representa un riesgo grave.
-
-Un atacante podría enviar instrucciones maliciosas para manipular el servidor o afectar el funcionamiento de la aplicación.
+La función `eval()` permitía ejecutar código JavaScript dinámicamente. Como el contenido venía desde una petición del usuario, esto representaba un riesgo grave de ejecución remota de código.
 
 ### Riesgos
 
@@ -144,51 +114,28 @@ Un atacante podría enviar instrucciones maliciosas para manipular el servidor o
 - Caída del servidor.
 - Alteración del comportamiento de la aplicación.
 
-### Solución recomendada
+### Solución aplicada
 
-Eliminar completamente el uso de `eval()`.
+Se eliminó el uso de `eval()` y se mantuvieron únicamente endpoints con lógica controlada por funciones internas.
 
-Si se necesita realizar una operación dinámica, se debe controlar mediante estructuras seguras como condicionales, `switch` o funciones previamente definidas.
+Parte corregida:
 
-Ejemplo de corrección:
+    app.post('/api/run-tests', (req, res) => {
+      const { failTests } = req.body;
 
-    app.get('/calculate', (req, res) => {
-      const { a, b, operation } = req.query;
-
-      const numA = Number(a);
-      const numB = Number(b);
-
-      if (Number.isNaN(numA) || Number.isNaN(numB)) {
-        return res.status(400).json({
-          message: 'Valores inválidos'
-        });
-      }
-
-      let result;
-
-      switch (operation) {
-        case 'sum':
-          result = numA + numB;
-          break;
-
-        case 'subtract':
-          result = numA - numB;
-          break;
-
-        case 'multiply':
-          result = numA * numB;
-          break;
-
-        default:
-          return res.status(400).json({
-            message: 'Operación no permitida'
+      runTests(failTests, (error, result) => {
+        if (error) {
+          return res.status(500).json({
+            success: false,
+            error: error.message
           });
-      }
+        }
 
-      res.json({
-        result
+        res.json(result);
       });
     });
+
+Con esta corrección, la aplicación ya no interpreta ni ejecuta código enviado directamente por el usuario.
 
 ## 4.3. Expresión regular vulnerable a ReDoS
 
@@ -198,7 +145,7 @@ Ejemplo de corrección:
 
 ### Problema
 
-La expresión regular contiene cuantificadores anidados. Esto puede provocar un crecimiento excesivo en el tiempo de ejecución cuando se evalúan entradas largas o diseñadas específicamente para generar lentitud.
+La expresión regular contenía cuantificadores anidados. Esto podía provocar un crecimiento excesivo en el tiempo de ejecución cuando se evaluaban entradas largas o diseñadas específicamente para generar lentitud.
 
 Este problema se conoce como ReDoS, es decir, Regular Expression Denial of Service.
 
@@ -210,33 +157,58 @@ Este problema se conoce como ReDoS, es decir, Regular Expression Denial of Servi
 - Denegación de servicio.
 - Mala experiencia para el usuario.
 
-### Solución recomendada
+### Solución aplicada
 
-Evitar expresiones regulares con cuantificadores anidados y reemplazarlas por patrones más simples.
+Se eliminó la validación basada en una expresión regular vulnerable y se mantuvo el manejo de rutas mediante Express y controladores definidos.
 
-Ejemplo de corrección:
+Parte corregida:
 
-    const pattern = /^a+$/;
+    router.get('/', getAllDoctors);
+    router.post('/', addNewDoctor);
+    router.put('/:id', updateDoctor);
+    router.delete('/:id', deleteDoctor);
 
-También se recomienda limitar la longitud máxima de las entradas del usuario:
+Con esto se evita procesar entradas mediante patrones inseguros y se delega la lógica a controladores específicos.
 
-    app.post('/validate', (req, res) => {
-      const input = req.body.value;
+## 4.4. Divulgación de información sensible en rutas
 
-      if (!input || input.length > 100) {
-        return res.status(400).json({
-          message: 'Entrada inválida'
-        });
-      }
+### Código problemático
 
-      const pattern = /^a+$/;
+    let routeCounter = 0;
+    const routeSecret = 'route-secret-123';
 
-      res.json({
-        valid: pattern.test(input)
-      });
-    });
+### Problema
 
-## 4.4. Divulgación de la tecnología usada por el servidor
+El archivo de rutas contenía variables innecesarias relacionadas con un contador y un valor secreto. Aunque no formaban parte de la lógica final del CRUD, mantener secretos o valores sensibles dentro del código fuente es una mala práctica.
+
+### Riesgos
+
+- Exposición accidental de información sensible.
+- Código innecesario dentro del módulo de rutas.
+- Posibles alertas de análisis estático.
+- Menor mantenibilidad del código.
+
+### Solución aplicada
+
+Se limpió el archivo de rutas para conservar únicamente la configuración necesaria del router y sus controladores.
+
+Parte corregida:
+
+    const express = require('express');
+    const { getAllDoctors, addNewDoctor, updateDoctor, deleteDoctor } = require('../controllers/doctores.controller');
+
+    const router = express.Router();
+
+    router.get('/', getAllDoctors);
+    router.post('/', addNewDoctor);
+    router.put('/:id', updateDoctor);
+    router.delete('/:id', deleteDoctor);
+
+    module.exports = router;
+
+Con esta corrección, el archivo de rutas queda más limpio, seguro y mantenible.
+
+## 4.5. Divulgación de la tecnología usada por el servidor
 
 ### Código relacionado
 
@@ -255,88 +227,91 @@ Esto permite que un atacante identifique la tecnología utilizada por el servido
 - Mayor facilidad para ataques dirigidos.
 - Exposición innecesaria de información interna.
 
-### Solución recomendada
+### Solución aplicada
 
-Desactivar la cabecera `X-Powered-By`.
+Se centralizó la configuración de la aplicación en `app.js`, manteniendo únicamente los middlewares y rutas necesarias.
+
+Parte corregida:
 
     const app = express();
 
+    app.use(express.json());
+
+    app.use(express.static(path.join(__dirname, '../public')));
+
+    app.use('/api/pacientes', patientRoutes);
+    app.use('/api/medicamentos', medicamentosRoutes);
+    app.use('/api/especialidades', especialidadesRoutes);
+    app.use('/api/doctores', doctoresRoutes);
+
+Además, como mejora recomendada, se puede desactivar la cabecera de Express con:
+
     app.disable('x-powered-by');
 
-También se recomienda utilizar Helmet para agregar cabeceras de seguridad adicionales.
-
-    const helmet = require('helmet');
-
-    app.use(helmet());
-
-## 4.5. Exposición de credenciales en cabeceras HTTP
-
-### Código problemático
-
-    res.header('X-Admin-Password', adminPassword);
-    res.header('X-Api-Key', apiKey);
+## 4.6. Manejo de rutas no encontradas
 
 ### Problema
 
-El código envía información sensible como contraseñas o API keys dentro de las cabeceras HTTP.
+Cuando una ruta no existe, es importante responder correctamente con un estado HTTP 404 para evitar respuestas ambiguas y mejorar la trazabilidad del sistema.
 
-Esto es una mala práctica de seguridad, ya que las cabeceras pueden ser visibles para clientes, herramientas de depuración, proxies o registros del servidor.
+### Solución aplicada
 
-### Riesgos
+Se agregó un manejador global para rutas no encontradas.
 
-- Robo de credenciales.
-- Acceso no autorizado.
-- Uso indebido de claves API.
-- Escalada de privilegios.
-- Compromiso de servicios externos.
+Parte corregida:
 
-### Solución recomendada
+    app.use((req, res) => {
+      res.status(404).json({ message: 'Route not found' });
+    });
 
-Nunca se deben enviar contraseñas, tokens o API keys en las respuestas HTTP.
+Con esto, cualquier ruta inexistente devuelve una respuesta clara y controlada.
 
-Código corregido:
+## 4.7. Manejo de errores en endpoints internos
 
-    res.header('Access-Control-Allow-Origin', allowedOrigin);
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+### Problema
 
-Las credenciales deben almacenarse en variables de entorno.
+Los endpoints internos deben manejar errores de forma controlada para evitar caídas del servidor y respuestas incompletas.
 
-Ejemplo de archivo `.env`:
+### Solución aplicada
 
-    API_KEY=clave_segura
-    ADMIN_PASSWORD=clave_segura
+Se agregó manejo de errores en los endpoints relacionados con pruebas y logs.
 
-Uso recomendado en Node.js:
+Parte corregida:
 
-    require('dotenv').config();
+    app.get('/api/test-logs', (req, res) => {
+      try {
+        const logs = getTestLogs();
+        res.json({ success: true, logs: logs });
+      } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
 
-    const apiKey = process.env.API_KEY;
-    const adminPassword = process.env.ADMIN_PASSWORD;
+Con esto, si ocurre un error al obtener logs, el servidor responde con un estado 500 controlado.
 
 ## 5. Soluciones generales aplicadas o recomendadas
 
-Para corregir los problemas detectados se recomienda aplicar las siguientes mejoras:
+Para corregir los problemas detectados se aplicaron o recomendaron las siguientes mejoras:
 
 - Eliminar el uso de `eval()`.
-- Evitar la ejecución directa de comandos recibidos desde el usuario.
-- Usar `execFile()` en lugar de `exec()` cuando sea estrictamente necesario ejecutar comandos.
-- Aplicar listas blancas para acciones permitidas.
-- Reemplazar expresiones regulares vulnerables.
-- Limitar el tamaño máximo de las entradas del usuario.
-- Desactivar la cabecera `X-Powered-By` de Express.
-- Usar Helmet para mejorar las cabeceras de seguridad.
-- No exponer credenciales en cabeceras HTTP.
-- Usar variables de entorno para datos sensibles.
-- Validar correctamente los datos recibidos por query params, body y headers.
+- Eliminar la ejecución directa de comandos recibidos desde el usuario.
+- Quitar endpoints inseguros que permitían ejecutar código o comandos externos.
+- Mantener rutas controladas mediante routers de Express.
+- Separar la lógica mediante controladores.
+- Eliminar variables innecesarias o sensibles dentro de archivos de rutas.
+- Manejar rutas inexistentes con una respuesta 404.
+- Manejar errores internos con respuestas 500 controladas.
+- Validar correctamente los datos recibidos por `query params`, `body` y `headers`.
+- No exponer credenciales ni secretos dentro del código fuente.
 - Agregar pruebas unitarias y de integración para mejorar la cobertura del proyecto.
 
 
-## 7. Conclusión
+## 6. Conclusión
 
-El análisis permitió identificar varios problemas importantes dentro del archivo `src/app.js`. Los casos más críticos están relacionados con la ejecución de comandos del sistema, el uso de `eval()`, expresiones regulares inseguras y exposición de información sensible.
+El análisis permitió identificar varios problemas importantes dentro del proyecto. Los casos más críticos estaban relacionados con la ejecución de comandos del sistema, el uso de `eval()`, expresiones regulares inseguras y exposición de información sensible.
 
-Aunque SonarQube calificó la seguridad general como A, el Security Review aparece con calificación E debido a que existen Security Hotspots sin revisar. Por esta razón, es necesario analizar y corregir manualmente estos puntos antes de considerar que el proyecto es seguro.
+Las correcciones realizadas eliminaron los puntos inseguros y dejaron la aplicación organizada mediante rutas controladas, middlewares definidos, manejo de errores y separación de responsabilidades.
 
-La aplicación de las soluciones propuestas mejora la seguridad, confiabilidad y mantenibilidad del sistema.
+Aunque SonarQube puede mostrar una buena calificación general de seguridad, los Security Hotspots deben revisarse manualmente porque pueden representar riesgos reales si el proyecto se ejecuta en un entorno productivo.
+
+La aplicación de estas soluciones mejora la seguridad, confiabilidad y mantenibilidad del sistema.
