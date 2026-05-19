@@ -34,9 +34,6 @@ describe('Pacientes API', () => {
     expect(res.body).toHaveProperty('message', 'Name, Last Name, Email, Gender and Illness are required');
   });
 
-});
-
-
   // PUT
   test('PUT /api/pacientes/:id should update an existing patient', async () => {
     const patient = {
@@ -85,3 +82,50 @@ describe('Pacientes API', () => {
     expect(updated.body.email).toBe('pedroluis@example.com');
     expect(updated.body.illness).toBe('Diabetes'); // No cambia
   });
+
+  // DELETE
+  test('DELETE /api/pacientes/:id should delete a patient', async () => {
+    const patient = {
+      name: 'Carlos',
+      lastName: 'Perez',
+      email: 'carlosperez@example.com',
+      gender: 'Masculino',
+      illness: 'Alergia'
+    };
+
+    const carlosPerez = await request(app).post('/api/pacientes').send(patient);
+    const id = carlosPerez.body.id;
+
+    const deleted = await request(app).delete(`/api/pacientes/${id}`);
+    expect(deleted.statusCode).toBe(200);
+    expect(deleted.body.name).toBe('Carlos');
+
+    const res = await request(app).get('/api/pacientes');
+    expect(res.body.find(p => p.id === id)).toBeUndefined();
+  });
+
+  // PUT: Paciente no encontrado
+  test('PUT /api/pacientes/:id should return 404 if patient not found', async () => {
+    const res = await request(app)
+      .put('/api/pacientes/999999')
+      .send({ illness: 'Gripe' });
+    
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Patient not found');
+  });
+
+  // DELETE: Paciente no encontrado
+  test('DELETE /api/pacientes/:id should return 404 if patient not found', async () => {
+    const res = await request(app).delete('/api/pacientes/999999');
+    
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Patient not found');
+  });
+
+  // Prueba que el manejador 404 funcione
+  test('GET /ruta-inexistente - should return 404 for non-existent routes', async () => {
+    const res = await request(app).get('/ruta-inexistente');
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Route not found');
+  });
+});
