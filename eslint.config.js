@@ -1,7 +1,10 @@
 const js = require('@eslint/js');
+const globals = require('globals');
+
 
 module.exports = {
   files: ['src/**/*.js'],
+  ignores: ['node_modules/**', 'coverage/**'],
 
   languageOptions: {
     ecmaVersion: 2021,
@@ -11,7 +14,8 @@ module.exports = {
       __filename: 'readonly',
       require: 'readonly',
       module: 'readonly',
-      console: 'readonly'
+      console: 'readonly',
+      ...globals.node
     }
   },
 
