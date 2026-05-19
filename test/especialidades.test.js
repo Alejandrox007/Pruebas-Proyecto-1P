@@ -61,9 +61,44 @@ describe('Especialidades API', () => {
     expect(res.body).toHaveProperty('message', 'Specialty not found');
   });
 
+  // test('PUT /api/especialidades/:id should return 400 if name is not provided', async () => {
+  //   const createRes = await request(app).post('/api/especialidades').send({ name: 'Medicina General' });
+  //   const specialtyId = createRes.body.id;
+    
+  //   const res = await request(app).put(`/api/especialidades/${specialtyId}`).send({});
+    
+  //   expect(res.statusCode).toBe(400);
+  //   expect(res.body).toHaveProperty('message', 'Name is required to update Specialty');
+  // });
 
+  // DELETE
+  test('DELETE /api/especialidades/:id should delete a specialty', async () => {
+    const specialty = { name: 'Cardiología' };
+    const created = await request(app).post('/api/especialidades').send(specialty);
+    const id = created.body.id;
 
+    const deleted = await request(app).delete(`/api/especialidades/${id}`);
+    expect(deleted.statusCode).toBe(200);
+    expect(deleted.body.name).toBe('Cardiología');
 
+    const res = await request(app).get('/api/especialidades');
+    expect(res.body.find(e => e.id === id)).toBeUndefined();
+  });
+
+  // DELETE: Especialidad no encontrada
+  test('DELETE /api/especialidades/:id should return 404 if specialty not found', async () => {
+    const res = await request(app).delete('/api/especialidades/999999');
+
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Specialty not found');
+  });
+
+  // 404 
+  test('GET /ruta-inexistente - should return 404 for non-existent routes', async () => {
+    const res = await request(app).get('/ruta-inexistente');
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Route not found');
+  });
 
   
 });

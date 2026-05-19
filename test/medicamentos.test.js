@@ -99,6 +99,20 @@ describe('Medicamentos API', () => {
     expect(res.body).toHaveProperty('message', 'Medicamento not found');
   });
 
+  // DELETE: Medicamento no encontrado
+  test('DELETE /api/medicamentos/:id should return 404 if medicamento not found', async () => {
+    const res = await request(app).delete('/api/medicamentos/999999');
+    
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Medicamento not found');
+  });
+
+  // Prueba que el manejador 404 funcione
+  test('GET /ruta-inexistente - should return 404 for non-existent routes', async () => {
+    const res = await request(app).get('/ruta-inexistente');
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Route not found');
+  });
 
   
 });
