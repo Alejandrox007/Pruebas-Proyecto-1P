@@ -35,3 +35,53 @@ describe('Pacientes API', () => {
   });
 
 });
+
+
+  // PUT
+  test('PUT /api/pacientes/:id should update an existing patient', async () => {
+    const patient = {
+      name: 'Ana',
+      lastName: 'Lopez',
+      email: 'analopez@example.com',
+      gender: 'Femenino',
+      illness: 'Fiebre'
+    };
+
+    const anaLopez = await request(app).post('/api/pacientes').send(patient);
+    const id = anaLopez.body.id;
+
+    const updated = await request(app)
+      .put(`/api/pacientes/${id}`)
+      .send({ illness: 'Migraña' });
+
+    expect(updated.statusCode).toBe(200);
+    expect(updated.body.illness).toBe('Migraña');
+  });
+
+  // PUT: Actualizar múltiples campos
+  test('PUT /api/pacientes/:id should update multiple fields', async () => {
+    const patient = {
+      name: 'Pedro',
+      lastName: 'Garcia',
+      email: 'pedro@example.com',
+      gender: 'Masculino',
+      illness: 'Diabetes'
+    };
+
+    const pedroGarcia = await request(app).post('/api/pacientes').send(patient);
+    const id = pedroGarcia.body.id;
+
+    const updated = await request(app)
+      .put(`/api/pacientes/${id}`)
+      .send({ 
+        name: 'Pedro Luis',
+        lastName: 'Garcia Perez',
+        email: 'pedroluis@example.com'
+      });
+
+    expect(updated.statusCode).toBe(200);
+    expect(updated.body.name).toBe('Pedro Luis');
+    expect(updated.body.lastName).toBe('Garcia Perez');
+    expect(updated.body.email).toBe('pedroluis@example.com');
+    expect(updated.body.illness).toBe('Diabetes'); // No cambia
+  });
