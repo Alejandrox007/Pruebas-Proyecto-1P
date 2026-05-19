@@ -31,6 +31,74 @@ describe('Medicamentos API', () => {
     expect(res.body).toHaveProperty('message', 'Name is required');
   });
 
+  // PUT
+  test('PUT /api/medicamentos/:id should update an existing medicamento', async () => {
+    const medicamento = {
+      name: 'Aspirina',
+      description: 'Antiinflamatorio'
+    };
+
+    const aspirina = await request(app).post('/api/medicamentos').send(medicamento);
+    const id = aspirina.body.id;
+
+    const updated = await request(app)
+      .put(`/api/medicamentos/${id}`)
+      .send({ description: 'Antiinflamatorio actualizado' });
+
+    expect(updated.statusCode).toBe(200);
+    expect(updated.body.description).toBe('Antiinflamatorio actualizado');
+  });
+
+  // PUT: Actualizar múltiples campos
+  test('PUT /api/medicamentos/:id should update multiple fields', async () => {
+    const medicamento = {
+      name: 'Ibuprofeno',
+      description: 'Antiinflamatorio'
+    };
+
+    const ibuprofeno = await request(app).post('/api/medicamentos').send(medicamento);
+    const id = ibuprofeno.body.id;
+
+    const updated = await request(app)
+      .put(`/api/medicamentos/${id}`)
+      .send({ 
+        name: 'Ibuprofeno 400mg',
+        description: 'Antiinflamatorio y analgésico'
+      });
+
+    expect(updated.statusCode).toBe(200);
+    expect(updated.body.name).toBe('Ibuprofeno 400mg');
+    expect(updated.body.description).toBe('Antiinflamatorio y analgésico');
+  });
+
+  // DELETE
+  test('DELETE /api/medicamentos/:id should delete a medicamento', async () => {
+    const medicamento = {
+      name: 'Amoxicilina',
+      description: 'Antibiótico'
+    };
+
+    const amoxicilina = await request(app).post('/api/medicamentos').send(medicamento);
+    const id = amoxicilina.body.id;
+
+    const deleted = await request(app).delete(`/api/medicamentos/${id}`);
+    expect(deleted.statusCode).toBe(200);
+    expect(deleted.body.name).toBe('Amoxicilina');
+
+    const res = await request(app).get('/api/medicamentos');
+    expect(res.body.find(m => m.id === id)).toBeUndefined();
+  });
+
+  // PUT: Medicamento no encontrado
+  test('PUT /api/medicamentos/:id should return 404 if medicamento not found', async () => {
+    const res = await request(app)
+      .put('/api/medicamentos/999999')
+      .send({ description: 'Actualizado' });
+    
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Medicamento not found');
+  });
+
 
   
 });
