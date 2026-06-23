@@ -4,14 +4,16 @@ const app = require('../src/app.js');
 describe('App API - Main Endpoints', () => {
   
   // Test CORS middleware
-  test('OPTIONS request - should allow CORS', async () => {
-    const res = await request(app)
-      .options('/api/pacientes')
-      .set('Origin', 'http://example.com');
-    
-    expect(res.statusCode).toBe(200);
-    expect(res.headers['access-control-allow-origin']).toBe('*');
-  });
+test('OPTIONS request - should allow CORS for allowed origin', async () => {
+  const allowedOrigin = 'http://localhost:3000';
+
+  const res = await request(app)
+    .options('/api/pacientes')
+    .set('Origin', allowedOrigin);
+
+  expect(res.statusCode).toBe(204);
+  expect(res.headers['access-control-allow-origin']).toBe(allowedOrigin);
+});
 
   // Test 404 handler
   test('GET /ruta-inexistente - should return 404 for non-existent routes', async () => {
@@ -51,10 +53,15 @@ describe('App API - Main Endpoints', () => {
   });
 
   // Test CORS headers
-  test('GET /api/pacientes - should include CORS headers', async () => {
-    const res = await request(app).get('/api/pacientes');
-    expect(res.headers['access-control-allow-origin']).toBe('*');
-  });
+test('GET /api/pacientes - should include CORS headers for allowed origin', async () => {
+  const allowedOrigin = 'http://localhost:3000';
+
+  const res = await request(app)
+    .get('/api/pacientes')
+    .set('Origin', allowedOrigin);
+
+  expect(res.headers['access-control-allow-origin']).toBe(allowedOrigin);
+});
 
   // Test GET all medicamentos
   test('GET /api/medicamentos - should return medicamentos list', async () => {
@@ -78,10 +85,15 @@ describe('App API - Main Endpoints', () => {
   });
 
   // Test CORS with different methods
-  test('GET /api/medicamentos - should have CORS headers', async () => {
-    const res = await request(app).get('/api/medicamentos');
-    expect(res.headers['access-control-allow-origin']).toBe('*');
-  });
+test('GET /api/medicamentos - should have CORS headers for allowed origin', async () => {
+  const allowedOrigin = 'http://localhost:3000';
+
+  const res = await request(app)
+    .get('/api/medicamentos')
+    .set('Origin', allowedOrigin);
+
+  expect(res.headers['access-control-allow-origin']).toBe(allowedOrigin);
+});
 
   // Test 404 on different route
   test('GET /api/ruta-invalida - should return 404', async () => {

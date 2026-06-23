@@ -1,0 +1,67 @@
+<div class="tab-content active">
+  <div class="form-section">
+    <h2>Agregar Paciente</h2>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Nombre</label>
+          <input type="text" id="name" formControlName="name" class="form-control" placeholder="María">
+        </div>
+        <div class="form-group">
+          <label for="lastName">Apellido</label>
+          <input type="text" id="lastName" formControlName="lastName" class="form-control" placeholder="García">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" formControlName="email" class="form-control" placeholder="paciente@email.com">
+        </div>
+        <div class="form-group">
+          <label for="gender">Género</label>
+          <select id="gender" formControlName="gender" class="form-control">
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="illness">Enfermedad</label>
+          <input type="text" id="illness" formControlName="illness" class="form-control" placeholder="Diabetes">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ editingId ? 'Actualizar' : 'Crear' }} Paciente</button>
+        <button type="button" (click)="clearForm()" class="btn btn-secondary" *ngIf="editingId">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="list-section">
+    <h2>Lista de Pacientes</h2>
+    <div class="loading" *ngIf="loading">Cargando...</div>
+    <div class="empty-state" *ngIf="!loading && patients.length === 0">
+      <p>No hay pacientes registrados</p>
+    </div>
+    <div class="items-grid">
+      <div class="item-card" *ngFor="let patient of patients">
+        <div class="item-header">
+          <div class="item-title">{{ patient.name }} {{ patient.lastName }}</div>
+          <div class="item-actions">
+            <button class="btn-edit" (click)="editPatient(patient)">Editar</button>
+            <button class="btn-delete" (click)="deletePatient(patient.id)">Eliminar</button>
+          </div>
+        </div>
+        <div class="item-details">
+          <div class="item-detail"><strong>Email:</strong> {{ patient.email }}</div>
+          <div class="item-detail"><strong>Género:</strong> {{ patient.gender === 'M' ? 'Masculino' : 'Femenino' }}</div>
+          <div class="item-detail"><strong>Enfermedad:</strong> {{ patient.illness }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<div class="tab-content active">
+  <div class="form-section">
+    <h2>Agregar Medicamento</h2>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Nombre</label>
+          <input type="text" id="name" formControlName="name" class="form-control" placeholder="Aspirina">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="description">Descripción</label>
+          <input type="text" id="description" formControlName="description" class="form-control" placeholder="Analgésico y antiinflamatorio">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ editingId ? 'Actualizar' : 'Crear' }} Medicamento</button>
+        <button type="button" (click)="clearForm()" class="btn btn-secondary" *ngIf="editingId">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="list-section">
+    <h2>Lista de Medicamentos</h2>
+    <div class="loading" *ngIf="loading">Cargando...</div>
+    <div class="empty-state" *ngIf="!loading && medicines.length === 0">
+      <p>No hay medicamentos registrados</p>
+    </div>
+    <div class="items-grid">
+      <div class="item-card" *ngFor="let medicine of medicines">
+        <div class="item-header">
+          <div class="item-title">{{ medicine.name }}</div>
+          <div class="item-actions">
+            <button class="btn-edit" (click)="editMedicine(medicine)">Editar</button>
+            <button class="btn-delete" (click)="deleteMedicine(medicine.id)">Eliminar</button>
+          </div>
+        </div>
+        <div class="item-details">
+          <div class="item-detail"><strong>Descripción:</strong> {{ medicine.description }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

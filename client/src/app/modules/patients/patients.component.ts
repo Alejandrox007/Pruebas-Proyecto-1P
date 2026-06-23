@@ -1,0 +1,122 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ApiService, Patient } from '../../services/api.service';
+import { ToastService } from '../../services/toast.service';
+
+@Component({
+  selector: 'app-patients',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  templateUrl: './patients.component.html',
+  styleUrls: ['./patients.component.scss']
+})
+export class PatientsComponent implements OnInit {
+  patients: Patient[] = [];
+  form!: FormGroup;
+  loading = false;
+  editingId: number | null = null;
+
+  constructor(
+    private apiService: ApiService,
+    private toastService: ToastService,
+    private fb: FormBuilder
+  ) {
+    this.initForm();
+  }
+
+  ngOnInit(): void {
+    this.loadPatients();
+  }
+
+  initForm(): void {
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+      lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      gender: ['M', Validators.required],
+      illness: ['', Validators.required]
+    });
+  }
+
+  loadPatients(): void {
+    this.loading = true;
+    this.apiService.getPatients().subscribe({
+      next: (patients) => {
+        if (Array.isArray(patients)) {
+          this.patients = patients;
+        }
+        this.loading = false;
+      },
+      error: (error) => {
+        this.toastService.showToast('Error al cargar pacientes', 'error');
+        this.loading = false;
+      }
+    });
+  }
+
+  onSubmit(): void {
+    if (!this.form.valid) {
+      this.toastService.showToast('Por favor completa todos los campos', 'error');
+      return;
+    }
+
+    const patient = this.form.value;
+
+    if (this.editingId) {
+      this.apiService.updatePatient(this.editingId, patient).subscribe({
+        next: () => {
+          this.toastService.showToast('Paciente actualizado exitosamente', 'success');
+          this.clearForm();
+          this.loadPatients();
+        },
+        error: (error) => {
+          this.toastService.showToast('Error al actualizar paciente', 'error');
+        }
+      });
+    } else {
+      this.apiService.createPatient(patient).subscribe({
+        next: () => {
+          this.toastService.showToast('Paciente creado exitosamente', 'success');
+          this.clearForm();
+          this.loadPatients();
+        },
+        error: (error) => {
+          this.toastService.showToast('Error al crear paciente', 'error');
+        }
+      });
+    }
+  }
+
+  editPatient(patient: Patient): void {
+    this.editingId = patient.id || null;
+    this.form.patchValue({
+      name: patient.name,
+      lastName: patient.lastName,
+      email: patient.email,
+      gender: patient.gender,
+      illness: patient.illness
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  deletePatient(id: number | undefined): void {
+    if (!id) return;
+    if (!confirm('¿Estás seguro de eliminar este paciente?')) return;
+
+    this.apiService.deletePatient(id).subscribe({
+      next: () => {
+        this.toastService.showToast('Paciente eliminado exitosamente', 'success');
+        this.loadPatients();
+      },
+      error: (error) => {
+        this.toastService.showToast('Error al eliminar paciente', 'error');
+      }
+    });
+  }
+
+  clearForm(): void {
+    this.form.reset({ gender: 'M' });
+    this.editingId = null;
+  }
+}

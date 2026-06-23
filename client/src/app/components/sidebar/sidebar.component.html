@@ -1,0 +1,49 @@
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">H</div>
+    <div class="brand-text">
+      <span class="brand-title">Hospital Ops</span>
+      <span class="brand-subtitle">Dashboard</span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <p class="sidebar-label">Modulos</p>
+    <div class="tabs sidebar-tabs">
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'doctors'"
+        (click)="selectTab('doctors')">
+        Doctores
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'patients'"
+        (click)="selectTab('patients')">
+        Pacientes
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'medicines'"
+        (click)="selectTab('medicines')">
+        Medicamentos
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'specialties'"
+        (click)="selectTab('specialties')">
+        Especialidades
+      </button>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="status-card status-card-sidebar" 
+         [ngClass]="(serverStatus$ | async) === true ? 'status-online' : (serverStatus$ | async) === false ? 'status-offline' : 'status-unknown'">
+      <span class="status-label">Servidor</span>
+      <span class="status-value">
+        {{ (serverStatus$ | async) === true ? 'Operativo' : (serverStatus$ | async) === false ? 'Sin conexión' : 'Comprobando...' }}
+      </span>
+    </div>
+  </div>
+</aside>

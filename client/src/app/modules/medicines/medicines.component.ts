@@ -1,0 +1,116 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ApiService, Medicine } from '../../services/api.service';
+import { ToastService } from '../../services/toast.service';
+
+@Component({
+  selector: 'app-medicines',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  templateUrl: './medicines.component.html',
+  styleUrls: ['./medicines.component.scss']
+})
+export class MedicinesComponent implements OnInit {
+  medicines: Medicine[] = [];
+  form!: FormGroup;
+  loading = false;
+  editingId: number | null = null;
+
+  constructor(
+    private apiService: ApiService,
+    private toastService: ToastService,
+    private fb: FormBuilder
+  ) {
+    this.initForm();
+  }
+
+  ngOnInit(): void {
+    this.loadMedicines();
+  }
+
+  initForm(): void {
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+      description: ['', Validators.required]
+    });
+  }
+
+  loadMedicines(): void {
+    this.loading = true;
+    this.apiService.getMedicines().subscribe({
+      next: (medicines) => {
+        if (Array.isArray(medicines)) {
+          this.medicines = medicines;
+        }
+        this.loading = false;
+      },
+      error: (error) => {
+        this.toastService.showToast('Error al cargar medicamentos', 'error');
+        this.loading = false;
+      }
+    });
+  }
+
+  onSubmit(): void {
+    if (!this.form.valid) {
+      this.toastService.showToast('Por favor completa todos los campos', 'error');
+      return;
+    }
+
+    const medicine = this.form.value;
+
+    if (this.editingId) {
+      this.apiService.updateMedicine(this.editingId, medicine).subscribe({
+        next: () => {
+          this.toastService.showToast('Medicamento actualizado exitosamente', 'success');
+          this.clearForm();
+          this.loadMedicines();
+        },
+        error: (error) => {
+          this.toastService.showToast('Error al actualizar medicamento', 'error');
+        }
+      });
+    } else {
+      this.apiService.createMedicine(medicine).subscribe({
+        next: () => {
+          this.toastService.showToast('Medicamento creado exitosamente', 'success');
+          this.clearForm();
+          this.loadMedicines();
+        },
+        error: (error) => {
+          this.toastService.showToast('Error al crear medicamento', 'error');
+        }
+      });
+    }
+  }
+
+  editMedicine(medicine: Medicine): void {
+    this.editingId = medicine.id || null;
+    this.form.patchValue({
+      name: medicine.name,
+      description: medicine.description
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  deleteMedicine(id: number | undefined): void {
+    if (!id) return;
+    if (!confirm('¿Estás seguro de eliminar este medicamento?')) return;
+
+    this.apiService.deleteMedicine(id).subscribe({
+      next: () => {
+        this.toastService.showToast('Medicamento eliminado exitosamente', 'success');
+        this.loadMedicines();
+      },
+      error: (error) => {
+        this.toastService.showToast('Error al eliminar medicamento', 'error');
+      }
+    });
+  }
+
+  clearForm(): void {
+    this.form.reset();
+    this.editingId = null;
+  }
+}

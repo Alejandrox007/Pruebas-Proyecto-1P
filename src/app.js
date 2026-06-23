@@ -12,8 +12,12 @@ app.disable('x-powered-by');
 // CORS Middleware
 const allowedOrigins = [
   'http://localhost:3000',
+  'http://localhost:4200',
   'http://localhost:5173',
-  'http://127.0.0.1:5500'
+  'http://127.0.0.1:5500',
+  'http://localhost:5500',
+  'http://127.0.0.1:3001',
+  'http://localhost:3001'
 ];
 
 app.use((req, res, next) => {
@@ -43,8 +47,9 @@ app.use((req, res, next) => {
 // Middleware to parse JSON from request body
 app.use(express.json());
 
-// Serve static files from public folder
-app.use(express.static(path.join(__dirname, '../public')));
+// Serve static files from Angular dist folder
+const angularDistPath = path.join(__dirname, '../client/dist/hospital-client');
+app.use(express.static(angularDistPath));
 
 
 app.use('/api/pacientes', patientRoutes);
@@ -77,9 +82,19 @@ app.get('/api/test-logs', (req, res) => {
   }
 });
 
-// Handler for routes not found (404)
+// SPA fallback: serve index.html for all non-API routes (Angular Router)
+app.use((req, res, next) => {
+  // Don't redirect API calls
+  if (req.url.startsWith('/api')) {
+    return next();
+  }
+  // Serve index.html for all other routes
+  res.sendFile(path.join(__dirname, '../client/dist/hospital-client/index.html'));
+});
+
+// 404 handler for API routes
 app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
+  res.status(404).json({ message: 'API route not found' });
 });
 
 // Export app to use it in tests or in a separate server file
