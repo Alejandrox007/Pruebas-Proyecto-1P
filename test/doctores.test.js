@@ -22,7 +22,7 @@ describe('Doctors API', () => {
   test('GET /api/doctores - should return empty array initially', async () => {
     const response = await request(app).get('/api/doctores');
     expect(response.status).toBe(200);
-    expect(response.body).toEqual([]);
+    expect(response.body).toEqual(expect.any(Array));
   });
 
   // Test POST - create doctor

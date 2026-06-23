@@ -1,0 +1,47 @@
+<div class="tab-content active">
+  <div class="form-section">
+    <h2>Agregar Especialidad</h2>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Nombre</label>
+          <input type="text" id="name" formControlName="name" class="form-control" placeholder="Cardiología">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="description">Descripción</label>
+          <input type="text" id="description" formControlName="description" class="form-control" placeholder="Especialidad del corazón">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ editingId ? 'Actualizar' : 'Crear' }} Especialidad</button>
+        <button type="button" (click)="clearForm()" class="btn btn-secondary" *ngIf="editingId">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="list-section">
+    <h2>Lista de Especialidades</h2>
+    <div class="loading" *ngIf="loading">Cargando...</div>
+    <div class="empty-state" *ngIf="!loading && specialties.length === 0">
+      <p>No hay especialidades registradas</p>
+    </div>
+    <div class="items-grid">
+      <div class="item-card" *ngFor="let specialty of specialties">
+        <div class="item-header">
+          <div class="item-title">{{ specialty.name }}</div>
+          <div class="item-actions">
+            <button class="btn-edit" (click)="editSpecialty(specialty)">Editar</button>
+            <button class="btn-delete" (click)="deleteSpecialty(specialty.id)">Eliminar</button>
+          </div>
+        </div>
+        <div class="item-details">
+          <div class="item-detail"><strong>Descripción:</strong> {{ specialty.description || 'N/A' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

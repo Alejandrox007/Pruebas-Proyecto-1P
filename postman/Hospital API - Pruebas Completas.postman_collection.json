@@ -1,0 +1,490 @@
+{
+  "info": {
+    "_postman_id": "fa755978-b992-4234-9f8d-c752f954408e",
+    "name": "Hospital API - Pruebas Completas",
+    "description": "Colección completa de pruebas para la API del Sistema Hospitalario",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55554846",
+    "_collection_link": "https://go.postman.co/collection/55554846-fa755978-b992-4234-9f8d-c752f954408e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Pacientes",
+      "item": [
+        {
+          "name": "Listar Todos los Pacientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/pacientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "pacientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Nuevo Paciente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan\",\n  \"lastName\": \"Pérez\",\n  \"email\": \"juan.perez@email.com\",\n  \"gender\": \"Masculino\",\n  \"illness\": \"Gripe\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/pacientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "pacientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Paciente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan\",\n  \"lastName\": \"Pérez Actualizado\",\n  \"email\": \"juan.perez.actualizado@email.com\",\n  \"gender\": \"Masculino\",\n  \"illness\": \"Recuperado\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/pacientes/6",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "pacientes",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Paciente",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/pacientes/6",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "pacientes",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Medicamentos",
+      "item": [
+        {
+          "name": "Listar Todos los Medicamentos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/medicamentos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "medicamentos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Nuevo Medicamento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Paracetamol\",\n  \"description\": \"Analgésico y antipirético\",\n  \"price\": 15.50,\n  \"quantity\": 100,\n  \"category\": \"Analgésicos\",\n  \"laboratory\": \"Laboratorio ABC\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/medicamentos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "medicamentos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Medicamento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Paracetamol\",\n  \"description\": \"Analgésico y antipirético - Actualizado\",\n  \"price\": 18.00,\n  \"quantity\": 150,\n  \"category\": \"Analgésicos\",\n  \"laboratory\": \"Laboratorio ABC\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/medicamentos/6",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "medicamentos",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Medicamento",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/medicamentos/6",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "medicamentos",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Doctores",
+      "item": [
+        {
+          "name": "Listar Todos los Doctores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/doctores",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "doctores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Nuevo Doctor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Carlos\",\n  \"lastName\": \"Pérez\",\n  \"specialty\": \"Cardiología\",\n  \"phone\": \"555-1234\",\n  \"email\": \"carlos.perez@hospital.com\",\n  \"licenseNumber\": \"MED-123435\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/doctores",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "doctores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Doctor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Carlos\",\n  \"lastName\": \"Pérez Actualizado\",\n  \"specialty\": \"Cardiología Avanzada\",\n  \"phone\": \"555-9999\",\n  \"email\": \"carlos.perez@hospital.com\",\n  \"licenseNumber\": \"MED-1232345\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/doctores/6",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "doctores",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Doctor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/doctores/6",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "doctores",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Especialidades",
+      "item": [
+        {
+          "name": "Listar Todas las Especialidades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/especialidades",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "especialidades"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Nueva Especialidad",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cardiología-pool\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/especialidades",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "especialidades"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Especialidad",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cardiología uwu\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/especialidades/10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "especialidades",
+                "10"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Especialidad",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/especialidades/69486426b32cdbca89d79b00",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "especialidades",
+                "69486426b32cdbca89d79b00"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    }
+  ]
+}

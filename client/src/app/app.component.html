@@ -1,0 +1,28 @@
+<div class="app-shell">
+  <app-sidebar (tabSelected)="selectTab($event)"></app-sidebar>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Panel principal</p>
+        <h1>Hospital API Dashboard</h1>
+        <p>Interfaz gráfica para gestionar Doctores, Pacientes, Medicamentos y Especialidades</p>
+      </div>
+      <div class="topbar-actions" style="position: relative; z-index: 1;">
+        <div class="status-card" [ngClass]="'status-unknown'" id="serverStatusCard">
+          <span class="status-label">Entorno</span>
+          <span class="status-value" id="serverStatusValue">Comprobando...</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <app-doctors *ngIf="activeTab === 'doctors'"></app-doctors>
+      <app-patients *ngIf="activeTab === 'patients'"></app-patients>
+      <app-medicines *ngIf="activeTab === 'medicines'"></app-medicines>
+      <app-specialties *ngIf="activeTab === 'specialties'"></app-specialties>
+    </div>
+  </main>
+</div>
+
+<app-toast></app-toast>

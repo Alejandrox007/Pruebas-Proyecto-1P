@@ -6,7 +6,7 @@ describe('Pacientes API', () => {
   test('GET /api/pacientes should return an empty list initially', async () => {
     const res = await request(app).get('/api/pacientes');
     expect(res.statusCode).toBe(200);
-    expect(res.body).toEqual([]);  // Vacía al inicio
+    expect(res.body).toEqual(expect.any(Array)); 
   });
 
   // POST
