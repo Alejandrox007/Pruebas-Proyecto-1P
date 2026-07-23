@@ -1,19 +1,14 @@
 const express = require('express');
-const { getAllSpecialties, addnewSpecialty, updateSpecialty, deleteSpecialty } = require('../controllers/especialidades.controller');
+const controller = require('../controllers/especialidades.controller');
+const asyncHandler = require('../middleware/async-handler');
+const { authorize } = require('../middleware/auth');
+const validate = require('../middleware/validate');
+const schemas = require('../validation/schemas');
 
 const router = express.Router();
-
-// ruta GET para obtener todas las especialidades
-router.get('/', getAllSpecialties);
-
-// Ruta POST para crear nueva especialidad
-router.post('/', addnewSpecialty);
-
-// Ruta PUT para modificar especialidad mediante su id
-router.put('/:id', updateSpecialty);
-
-// Ruta DELETE para eliminar especialidad mediante su id
-router.delete('/:id', deleteSpecialty);
-
+router.get('/', asyncHandler(controller.getAllSpecialties));
+router.post('/', authorize('admin'), validate({ body: schemas.specialty }), asyncHandler(controller.addnewSpecialty));
+router.put('/:id', authorize('admin'), validate({ params: schemas.idParams, body: schemas.specialty }), asyncHandler(controller.updateSpecialty));
+router.delete('/:id', authorize('admin'), validate({ params: schemas.idParams }), asyncHandler(controller.deleteSpecialty));
 
 module.exports = router;

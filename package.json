@@ -4,10 +4,16 @@
   "description": "PruebasSoftware Proyecto P1 Hospital",
   "scripts": {
     "start": "node server.js",
-    "test": "jest --runInBand",
-    "test:coverage": "jest --coverage",
-    "lint": "eslint",
-    "lintFix": "eslint --fix"
+    "dev": "node --watch server.js",
+    "db:migrate": "node scripts/migrate.js",
+    "test": "jest --runInBand --detectOpenHandles",
+    "test:coverage": "jest --runInBand --coverage",
+    "test:client": "npm --prefix client test",
+    "test:client:coverage": "npm --prefix client run test:coverage",
+    "test:all": "npm run lint && npm run test:coverage && npm run test:client:coverage && npm --prefix client run build",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
+    "security:audit": "npm audit --omit=dev --audit-level=high && npm --prefix client audit --omit=dev --audit-level=high"
   },
   "repository": {
     "type": "git",
@@ -15,27 +21,47 @@
   },
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "overrides": {
+    "body-parser": "2.3.0"
+  },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "dotenv": "^17.4.2",
-    "eslint": "^9.39.1",
-    "express": "^5.1.0",
-    "pg": "^8.20.0"
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.20.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.7.0",
     "globals": "^17.6.0",
-    "jest": "^25.0.0",
+    "jest": "^30.4.2",
+    "pg-mem": "^3.0.5",
     "supertest": "^7.1.4"
   },
   "jest": {
     "testEnvironment": "node",
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/test/",
-      "src/testRunner.js"
+    "testMatch": [
+      "<rootDir>/test/**/*.test.js"
     ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    },
+    "coveragePathIgnorePatterns": ["/node_modules/", "/test/", "src/database/"],
     "collectCoverageFrom": [
       "src/**/*.js",
-      "!src/testRunner.js"
+      "!src/database/**"
     ]
   }
 }

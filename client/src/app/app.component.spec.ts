@@ -1,48 +1,20 @@
-import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { BehaviorSubject } from 'rxjs';
 import { AppComponent } from './app.component';
-import { ApiService } from './services/api.service';
-import { of } from 'rxjs';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AuthService } from './services/auth.service';
 
 describe('AppComponent', () => {
-  let component: AppComponent;
-  let fixture: ComponentFixture<AppComponent>;
-  let mockApiService: any;
-
-  beforeEach(async () => {
-    mockApiService = {
-      serverStatus$: of(true),
-      getDoctors: () => of([]),
-      getPatients: () => of([]),
-      getMedicines: () => of([]),
-      getSpecialties: () => of([])
-    };
-
+  it('selects the initial tab by role and changes tabs', async () => {
+    const user$ = new BehaviorSubject<any>({ id: 1, email: 'admin@test.com', role: 'admin' });
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [
-        { provide: ApiService, useValue: mockApiService }
-      ]
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(AppComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create the app', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should have initial activeTab as "doctors"', () => {
+      providers: [{ provide: AuthService, useValue: { user: user$.value, user$ } }]
+    }).overrideComponent(AppComponent, { set: { template: '' } }).compileComponents();
+    const component = TestBed.createComponent(AppComponent).componentInstance;
+    expect(component.activeTab).toBe('dashboard');
+    component.selectTab('doctors');
     expect(component.activeTab).toBe('doctors');
-  });
-
-  it('should update activeTab when selectTab is called', () => {
-    component.selectTab('patients');
-    expect(component.activeTab).toBe('patients');
-
-    component.selectTab('medicines');
-    expect(component.activeTab).toBe('medicines');
+    user$.next({ id: 2, email: 'client@test.com', role: 'client' });
+    expect(component.activeTab).toBe('appointments');
   });
 });

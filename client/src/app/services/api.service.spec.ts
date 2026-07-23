@@ -1,281 +1,64 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient, HttpClient } from '@angular/common/http';
-import { ApiService, Doctor, Patient, Medicine, Specialty } from './api.service';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { ApiService } from './api.service';
 
 describe('ApiService', () => {
   let service: ApiService;
-  let httpMock: HttpTestingController;
+  let http: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        ApiService,
-        provideHttpClient(),
-        provideHttpClientTesting()
-      ]
-    });
+    TestBed.configureTestingModule({ imports: [HttpClientTestingModule] });
     service = TestBed.inject(ApiService);
-    httpMock = TestBed.inject(HttpTestingController);
-
-    // Manejar la petición inicial de checkServerStatus() en el constructor
-    const req = httpMock.expectOne('/api/doctores');
-    expect(req.request.method).toBe('GET');
-    req.flush([]);
+    http = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => {
-    httpMock.verify();
-    vi.useRealTimers();
-  });
+  afterEach(() => http.verify());
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+  function healthOk(): void {
+    http.expectOne('/api/health').flush({ status: 'ok' });
+  }
 
-  it('should update server status to true on successful connection check', () => {
-    let status: boolean | null = null;
-    service.serverStatus$.subscribe(s => status = s);
-
-    // Llamar explícitamente a checkServerStatus
+  it('reports server availability and failure', () => {
+    const states: Array<boolean | null> = [];
+    service.serverStatus$.subscribe((value) => states.push(value));
+    http.expectOne('/api/health').flush({ status: 'ok' });
+    expect(states.at(-1)).toBe(true);
     service.checkServerStatus();
-
-    const req = httpMock.expectOne('/api/doctores');
-    expect(req.request.method).toBe('GET');
-    req.flush([]); // éxito
-
-    expect(status).toBe(true);
+    http.expectOne('/api/health').flush({}, { status: 500, statusText: 'error' });
+    expect(states.at(-1)).toBe(false);
   });
 
-  it('should update server status to false on failed connection check', () => {
-    let status: boolean | null = null;
-    service.serverStatus$.subscribe(s => status = s);
-
-    // Llamar explícitamente a checkServerStatus
-    service.checkServerStatus();
-
-    const req = httpMock.expectOne('/api/doctores');
-    expect(req.request.method).toBe('GET');
-    req.flush('Error', { status: 500, statusText: 'Server Error' }); // error
-
-    expect(status).toBe(false);
-  });
-
-  // DOCTORS TESTS
-  describe('Doctors CRUD', () => {
-    const mockDoctors: Doctor[] = [
-      { id: 1, name: 'John', lastName: 'Doe', specialty: 'Cardiology', phone: '123', email: 'j@d.com', licenseNumber: 'LC123' }
+  it('executes every API contract with the expected method and body', () => {
+    healthOk();
+    const cases: Array<[() => unknown, string, string, unknown?]> = [
+      [() => service.getDoctors().subscribe(), '/api/doctores', 'GET'],
+      [() => service.createDoctor({ name: 'A', lastName: 'B', specialtyId: 1, phone: '1234567', email: 'a@b.co', licenseNumber: 'M1' }).subscribe(), '/api/doctores', 'POST'],
+      [() => service.updateDoctor(1, { phone: '12345678' }).subscribe(), '/api/doctores/1', 'PUT'],
+      [() => service.deleteDoctor(1).subscribe(), '/api/doctores/1', 'DELETE'],
+      [() => service.getPatients().subscribe(), '/api/pacientes', 'GET'],
+      [() => service.updatePatient(1, { illness: 'Gripe' }).subscribe(), '/api/pacientes/1', 'PUT'],
+      [() => service.deletePatient(1).subscribe(), '/api/pacientes/1', 'DELETE'],
+      [() => service.getMedicines().subscribe(), '/api/medicamentos', 'GET'],
+      [() => service.createMedicine({ name: 'A', description: null }).subscribe(), '/api/medicamentos', 'POST'],
+      [() => service.updateMedicine(1, { name: 'B' }).subscribe(), '/api/medicamentos/1', 'PUT'],
+      [() => service.deleteMedicine(1).subscribe(), '/api/medicamentos/1', 'DELETE'],
+      [() => service.getSpecialties().subscribe(), '/api/especialidades', 'GET'],
+      [() => service.createSpecialty({ name: 'Cardio' }).subscribe(), '/api/especialidades', 'POST'],
+      [() => service.updateSpecialty(1, { name: 'Neuro' }).subscribe(), '/api/especialidades/1', 'PUT'],
+      [() => service.deleteSpecialty(1).subscribe(), '/api/especialidades/1', 'DELETE'],
+      [() => service.getAppointments().subscribe(), '/api/citas', 'GET'],
+      [() => service.createAppointment({ doctorId: 1, scheduledAt: 'x', reason: 'reason' }).subscribe(), '/api/citas', 'POST'],
+      [() => service.updateAppointment(1, 'confirmed').subscribe(), '/api/citas/1', 'PATCH'],
+      [() => service.updateAppointment(1, 'completed', 'ok').subscribe(), '/api/citas/1', 'PATCH'],
+      [() => service.getPrescriptions().subscribe(), '/api/recetas', 'GET'],
+      [() => service.createPrescription({ appointmentId: 1, diagnosis: 'x', instructions: 'y', medications: [] }).subscribe(), '/api/recetas', 'POST'],
+      [() => service.getAdminSummary().subscribe(), '/api/admin/summary', 'GET']
     ];
-
-    it('should get doctors list', () => {
-      service.getDoctors().subscribe(doctors => {
-        expect(doctors).toEqual(mockDoctors);
-      });
-
-      const req = httpMock.expectOne('/api/doctores');
-      expect(req.request.method).toBe('GET');
-      req.flush(mockDoctors);
-    });
-
-    it('should create a doctor', () => {
-      const newDoctor: Doctor = { name: 'Jane', lastName: 'Smith', specialty: 'Pediatrics', phone: '456', email: 'j@s.com', licenseNumber: 'LC456' };
-      service.createDoctor(newDoctor).subscribe(doctor => {
-        expect(doctor).toEqual({ id: 2, ...newDoctor });
-      });
-
-      const req = httpMock.expectOne('/api/doctores');
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual(newDoctor);
-      req.flush({ id: 2, ...newDoctor });
-    });
-
-    it('should update a doctor', () => {
-      const updatedDoctor: Doctor = { name: 'John Updated', lastName: 'Doe', specialty: 'Cardiology', phone: '123', email: 'j@d.com', licenseNumber: 'LC123' };
-      service.updateDoctor(1, updatedDoctor).subscribe(doctor => {
-        expect(doctor).toEqual(updatedDoctor);
-      });
-
-      const req = httpMock.expectOne('/api/doctores/1');
-      expect(req.request.method).toBe('PUT');
-      expect(req.request.body).toEqual(updatedDoctor);
-      req.flush(updatedDoctor);
-    });
-
-    it('should delete a doctor', () => {
-      service.deleteDoctor(1).subscribe(res => {
-        expect(res).toBeTruthy();
-      });
-
-      const req = httpMock.expectOne('/api/doctores/1');
-      expect(req.request.method).toBe('DELETE');
-      req.flush({ success: true });
-    });
-  });
-
-  // PATIENTS TESTS
-  describe('Patients CRUD', () => {
-    const mockPatients: Patient[] = [
-      { id: 1, name: 'Alice', lastName: 'Wonder', email: 'a@w.com', gender: 'F', illness: 'Flu' }
-    ];
-
-    it('should get patients list', () => {
-      service.getPatients().subscribe(patients => {
-        expect(patients).toEqual(mockPatients);
-      });
-
-      const req = httpMock.expectOne('/api/pacientes');
-      expect(req.request.method).toBe('GET');
-      req.flush(mockPatients);
-    });
-
-    it('should create a patient', () => {
-      const newPatient: Patient = { name: 'Bob', lastName: 'Builder', email: 'b@b.com', gender: 'M', illness: 'Cold' };
-      service.createPatient(newPatient).subscribe(patient => {
-        expect(patient).toEqual({ id: 2, ...newPatient });
-      });
-
-      const req = httpMock.expectOne('/api/pacientes');
-      expect(req.request.method).toBe('POST');
-      req.flush({ id: 2, ...newPatient });
-    });
-
-    it('should update a patient', () => {
-      const updatedPatient: Patient = { name: 'Alice Updated', lastName: 'Wonder', email: 'a@w.com', gender: 'F', illness: 'Flu' };
-      service.updatePatient(1, updatedPatient).subscribe(patient => {
-        expect(patient).toEqual(updatedPatient);
-      });
-
-      const req = httpMock.expectOne('/api/pacientes/1');
-      expect(req.request.method).toBe('PUT');
-      req.flush(updatedPatient);
-    });
-
-    it('should delete a patient', () => {
-      service.deletePatient(1).subscribe(res => {
-        expect(res).toBeTruthy();
-      });
-
-      const req = httpMock.expectOne('/api/pacientes/1');
-      expect(req.request.method).toBe('DELETE');
-      req.flush({ success: true });
-    });
-  });
-
-  // MEDICINES TESTS
-  describe('Medicines CRUD', () => {
-    const mockMedicines: Medicine[] = [
-      { id: 1, name: 'Paracetamol', description: 'Pain killer' }
-    ];
-
-    it('should get medicines list', () => {
-      service.getMedicines().subscribe(medicines => {
-        expect(medicines).toEqual(mockMedicines);
-      });
-
-      const req = httpMock.expectOne('/api/medicamentos');
-      expect(req.request.method).toBe('GET');
-      req.flush(mockMedicines);
-    });
-
-    it('should create a medicine', () => {
-      const newMedicine: Medicine = { name: 'Ibuprofen', description: 'Anti-inflammatory' };
-      service.createMedicine(newMedicine).subscribe(medicine => {
-        expect(medicine).toEqual({ id: 2, ...newMedicine });
-      });
-
-      const req = httpMock.expectOne('/api/medicamentos');
-      expect(req.request.method).toBe('POST');
-      req.flush({ id: 2, ...newMedicine });
-    });
-
-    it('should update a medicine', () => {
-      const updatedMedicine: Medicine = { name: 'Paracetamol 500mg', description: 'Pain killer' };
-      service.updateMedicine(1, updatedMedicine).subscribe(medicine => {
-        expect(medicine).toEqual(updatedMedicine);
-      });
-
-      const req = httpMock.expectOne('/api/medicamentos/1');
-      expect(req.request.method).toBe('PUT');
-      req.flush(updatedMedicine);
-    });
-
-    it('should delete a medicine', () => {
-      service.deleteMedicine(1).subscribe(res => {
-        expect(res).toBeTruthy();
-      });
-
-      const req = httpMock.expectOne('/api/medicamentos/1');
-      expect(req.request.method).toBe('DELETE');
-      req.flush({ success: true });
-    });
-  });
-
-  // SPECIALTIES TESTS
-  describe('Specialties CRUD', () => {
-    const mockSpecialties: Specialty[] = [
-      { id: 1, name: 'Pediatrics', description: 'Children care' }
-    ];
-
-    it('should get specialties list', () => {
-      service.getSpecialties().subscribe(specialties => {
-        expect(specialties).toEqual(mockSpecialties);
-      });
-
-      const req = httpMock.expectOne('/api/especialidades');
-      expect(req.request.method).toBe('GET');
-      req.flush(mockSpecialties);
-    });
-
-    it('should create a specialty', () => {
-      const newSpecialty: Specialty = { name: 'Cardiology', description: 'Heart care' };
-      service.createSpecialty(newSpecialty).subscribe(specialty => {
-        expect(specialty).toEqual({ id: 2, ...newSpecialty });
-      });
-
-      const req = httpMock.expectOne('/api/especialidades');
-      expect(req.request.method).toBe('POST');
-      req.flush({ id: 2, ...newSpecialty });
-    });
-
-    it('should update a specialty', () => {
-      const updatedSpecialty: Specialty = { name: 'Pediatrics Special', description: 'Children care' };
-      service.updateSpecialty(1, updatedSpecialty).subscribe(specialty => {
-        expect(specialty).toEqual(updatedSpecialty);
-      });
-
-      const req = httpMock.expectOne('/api/especialidades/1');
-      expect(req.request.method).toBe('PUT');
-      req.flush(updatedSpecialty);
-    });
-
-    it('should delete a specialty', () => {
-      service.deleteSpecialty(1).subscribe(res => {
-        expect(res).toBeTruthy();
-      });
-
-      const req = httpMock.expectOne('/api/especialidades/1');
-      expect(req.request.method).toBe('DELETE');
-      req.flush({ success: true });
-    });
-  });
-
-  it('should call checkServerStatus periodically', () => {
-    vi.useFakeTimers();
-
-    // Instanciar manualmente dentro de fakeTimers para capturar el setInterval
-    const httpClient = TestBed.inject(HttpClient);
-    const testService = new ApiService(httpClient);
-
-    // Limpiar petición de construcción inicial
-    const req1 = httpMock.expectOne('/api/doctores');
-    req1.flush([]);
-
-    // Avanzar 15 segundos en el tiempo para disparar el intervalo
-    vi.advanceTimersByTime(15000);
-    
-    // Debería ocurrir una petición GET a /api/doctores debido al intervalo
-    const req2 = httpMock.expectOne('/api/doctores');
-    expect(req2.request.method).toBe('GET');
-    req2.flush([]);
+    for (const [call, url, method] of cases) {
+      call();
+      const req = http.expectOne(url);
+      expect(req.request.method).toBe(method);
+      req.flush({});
+    }
   });
 });

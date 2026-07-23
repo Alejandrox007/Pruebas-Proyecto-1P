@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ApiService, Doctor } from '../../services/api.service';
+import { ApiService, Doctor, Specialty } from '../../services/api.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -13,6 +13,7 @@ import { ToastService } from '../../services/toast.service';
 })
 export class DoctorsComponent implements OnInit {
   doctors: Doctor[] = [];
+  specialties: Specialty[] = [];
   form!: FormGroup;
   loading = false;
   editingId: number | null = null;
@@ -27,16 +28,21 @@ export class DoctorsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDoctors();
+    this.apiService.getSpecialties().subscribe((items) => this.specialties = items);
   }
 
   initForm(): void {
     this.form = this.fb.group({
-      name: ['', Validators.required],
-      lastName: ['', Validators.required],
-      specialty: ['', Validators.required],
-      phone: ['', Validators.required],
+      name: ['', [Validators.required, Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ '-]+$/)]],
+      lastName: ['', [Validators.required, Validators.pattern(/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ '-]+$/)]],
+      specialtyId: [null, Validators.required],
+      phone: ['', [Validators.required, Validators.pattern(/^\+?[0-9]{7,15}$/)]],
       email: ['', [Validators.required, Validators.email]],
-      licenseNumber: ['', Validators.required]
+      licenseNumber: ['', [Validators.required, Validators.pattern(/^[A-Za-z0-9-]+$/)]],
+      initialPassword: ['', [
+        Validators.minLength(10),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/)
+      ]]
     });
   }
 
@@ -44,9 +50,7 @@ export class DoctorsComponent implements OnInit {
     this.loading = true;
     this.apiService.getDoctors().subscribe({
       next: (doctors) => {
-        if (Array.isArray(doctors)) {
-          this.doctors = doctors;
-        }
+        this.doctors = doctors;
         this.loading = false;
       },
       error: (error) => {
@@ -62,9 +66,10 @@ export class DoctorsComponent implements OnInit {
       return;
     }
 
-    const doctor = this.form.value;
+    const doctor = { ...this.form.value };
 
     if (this.editingId) {
+      delete doctor.initialPassword;
       this.apiService.updateDoctor(this.editingId, doctor).subscribe({
         next: () => {
           this.toastService.showToast('Doctor actualizado exitosamente', 'success');
@@ -76,6 +81,10 @@ export class DoctorsComponent implements OnInit {
         }
       });
     } else {
+      if (!doctor.initialPassword) {
+        this.toastService.showToast('La contraseña inicial es obligatoria', 'error');
+        return;
+      }
       this.apiService.createDoctor(doctor).subscribe({
         next: () => {
           this.toastService.showToast('Doctor creado exitosamente', 'success');
@@ -94,12 +103,12 @@ export class DoctorsComponent implements OnInit {
     this.form.patchValue({
       name: doctor.name,
       lastName: doctor.lastName,
-      specialty: doctor.specialty,
+      specialtyId: doctor.specialtyId,
       phone: doctor.phone,
       email: doctor.email,
-      licenseNumber: doctor.licenseNumber
+      licenseNumber: doctor.licenseNumber,
+      initialPassword: ''
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   deleteDoctor(id: number | undefined): void {

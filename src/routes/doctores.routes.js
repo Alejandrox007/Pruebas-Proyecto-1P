@@ -1,20 +1,14 @@
 const express = require('express');
-const { getAllDoctors, addNewDoctor, updateDoctor, deleteDoctor } = require('../controllers/doctores.controller');
+const controller = require('../controllers/doctores.controller');
+const asyncHandler = require('../middleware/async-handler');
+const { authorize } = require('../middleware/auth');
+const validate = require('../middleware/validate');
+const schemas = require('../validation/schemas');
 
 const router = express.Router();
-
-
-// GET route to get all doctors
-router.get('/', getAllDoctors);
-
-// POST route to create a new doctor
-router.post('/', addNewDoctor);
-
-// PUT route to update a doctor by id
-router.put('/:id', updateDoctor);
-
-// DELETE route to delete a doctor by id
-router.delete('/:id', deleteDoctor);
+router.get('/', asyncHandler(controller.getAllDoctors));
+router.post('/', authorize('admin'), validate({ body: schemas.doctorCreate }), asyncHandler(controller.addNewDoctor));
+router.put('/:id', authorize('admin'), validate({ params: schemas.idParams, body: schemas.doctorUpdate }), asyncHandler(controller.updateDoctor));
+router.delete('/:id', authorize('admin'), validate({ params: schemas.idParams }), asyncHandler(controller.deleteDoctor));
 
 module.exports = router;
-

@@ -103,8 +103,6 @@ describe('SpecialtiesComponent', () => {
     component.editSpecialty(existingSpecialty);
 
     expect(component.editingId).toBe(1);
-    expect(window.scrollTo).toHaveBeenCalled();
-
     component.form.patchValue({ name: 'Cardiology Updated' });
 
     component.onSubmit();

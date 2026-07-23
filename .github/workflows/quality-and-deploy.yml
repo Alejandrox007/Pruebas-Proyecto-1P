@@ -1,0 +1,142 @@
+name: Quality Gate, Vercel and Render
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Lint, tests, coverage, build, SonarQube and security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            client/package-lock.json
+      - run: npm ci
+      - run: npm ci --prefix client
+      - run: npm run lint
+      - run: npm run test:coverage
+      - run: npm run test:client:coverage
+      - run: npm --prefix client run build
+      - run: npm run security:audit
+      - name: Validate production SonarQube configuration
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          test -n "$SONAR_TOKEN" || { echo "SONAR_TOKEN is required"; exit 1; }
+          test -n "$SONAR_HOST_URL" || { echo "SONAR_HOST_URL is required"; exit 1; }
+      - name: SonarQube quality gate
+        if: ${{ secrets.SONAR_TOKEN != '' }}
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Validate production Docker image
+        run: docker build --tag hospital-api:${{ github.sha }} .
+
+  api-e2e:
+    name: Postman, JMeter and k6
+    runs-on: ubuntu-latest
+    needs: quality
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: hospital
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d hospital"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NODE_ENV: ci
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/hospital
+      JWT_SECRET: ci-only-secret-that-is-longer-than-32-characters
+      ADMIN_EMAIL: admin@hospital.local
+      ADMIN_PASSWORD: ChangeMe123!
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run db:migrate
+      - name: Start API
+        run: |
+          npm start > /tmp/hospital-api.log 2>&1 &
+          for attempt in {1..30}; do
+            curl --fail --silent http://localhost:3000/api/health && exit 0
+            sleep 1
+          done
+          cat /tmp/hospital-api.log
+          exit 1
+      - name: Postman business flow
+        run: docker run --rm --network host -v "$PWD/postman:/etc/newman" postman/newman:alpine run "/etc/newman/Hospital API - Pruebas Completas.postman_collection.json" --bail
+      - name: Install JMeter
+        run: sudo apt-get update && sudo apt-get install -y jmeter
+      - name: JMeter authenticated load
+        run: jmeter -n -t jmeter/hospital-business-flow.jmx -Jthreads=2 -Jrampup=1 -Jduration=8 -l /tmp/jmeter-results.jtl
+      - uses: grafana/setup-k6-action@v1
+      - name: k6 smoke thresholds
+        run: k6 run k6/smoke.js
+
+  deploy-vercel:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    needs: [quality, api-e2e]
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+    environment: production
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Validate Vercel secrets
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          test -n "$VERCEL_TOKEN" || { echo "VERCEL_TOKEN is required"; exit 1; }
+          test -n "$VERCEL_ORG_ID" || { echo "VERCEL_ORG_ID is required"; exit 1; }
+          test -n "$VERCEL_PROJECT_ID" || { echo "VERCEL_PROJECT_ID is required"; exit 1; }
+      - run: npm install --global vercel@latest
+      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+  deploy-render:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    needs: [quality, api-e2e]
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+    environment: production
+    steps:
+      - name: Trigger Render deploy
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          test -n "$RENDER_DEPLOY_HOOK_URL" || { echo "RENDER_DEPLOY_HOOK_URL is required"; exit 1; }
+          curl --fail --show-error --silent --request POST "$RENDER_DEPLOY_HOOK_URL"

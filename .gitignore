@@ -1,5 +1,14 @@
-node_modules
-
-# Generate with 'npm run test:coverage'
-coverage  .scannerwork/ 
+node_modules/
+client/node_modules/
+coverage/
+client/coverage/
+client/dist/
+client/.angular/
 .scannerwork/
+.env
+.env.*
+!.env.example
+test-logs.json
+*.log
+*.zip
+*.bundle

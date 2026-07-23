@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService, Patient } from '../../services/api.service';
 import { ToastService } from '../../services/toast.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-patients',
@@ -16,12 +17,15 @@ export class PatientsComponent implements OnInit {
   form!: FormGroup;
   loading = false;
   editingId: number | null = null;
+  readonly isAdmin: boolean;
 
   constructor(
     private apiService: ApiService,
     private toastService: ToastService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    auth: AuthService
   ) {
+    this.isAdmin = auth.user?.role === 'admin';
     this.initForm();
   }
 
@@ -33,8 +37,8 @@ export class PatientsComponent implements OnInit {
     this.form = this.fb.group({
       name: ['', Validators.required],
       lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      gender: ['M', Validators.required],
+      phone: ['', Validators.pattern(/^\+?[0-9]{7,15}$/)],
+      gender: ['Masculino', Validators.required],
       illness: ['', Validators.required]
     });
   }
@@ -43,9 +47,7 @@ export class PatientsComponent implements OnInit {
     this.loading = true;
     this.apiService.getPatients().subscribe({
       next: (patients) => {
-        if (Array.isArray(patients)) {
-          this.patients = patients;
-        }
+        this.patients = patients;
         this.loading = false;
       },
       error: (error) => {
@@ -75,16 +77,7 @@ export class PatientsComponent implements OnInit {
         }
       });
     } else {
-      this.apiService.createPatient(patient).subscribe({
-        next: () => {
-          this.toastService.showToast('Paciente creado exitosamente', 'success');
-          this.clearForm();
-          this.loadPatients();
-        },
-        error: (error) => {
-          this.toastService.showToast('Error al crear paciente', 'error');
-        }
-      });
+      this.toastService.showToast('Selecciona un paciente para editarlo', 'error');
     }
   }
 
@@ -93,11 +86,10 @@ export class PatientsComponent implements OnInit {
     this.form.patchValue({
       name: patient.name,
       lastName: patient.lastName,
-      email: patient.email,
+      phone: patient.phone,
       gender: patient.gender,
       illness: patient.illness
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   deletePatient(id: number | undefined): void {
@@ -116,7 +108,7 @@ export class PatientsComponent implements OnInit {
   }
 
   clearForm(): void {
-    this.form.reset({ gender: 'M' });
+    this.form.reset({ gender: 'Masculino' });
     this.editingId = null;
   }
 }

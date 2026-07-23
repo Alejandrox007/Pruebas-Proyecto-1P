@@ -1,0 +1,47 @@
+<div class="tab-content active">
+  <section class="form-section" *ngIf="role === 'doctor'">
+    <h2>Emitir receta</h2>
+    <form [formGroup]="form" (ngSubmit)="create()" class="form">
+      <div class="form-group">
+        <label for="prescription-appointment">Cita atendida</label>
+        <select id="prescription-appointment" formControlName="appointmentId">
+          <option [ngValue]="null">Selecciona</option>
+          <option *ngFor="let item of appointments" [ngValue]="item.id">{{ item.patient }} — {{ item.scheduledAt | date:'short' }}</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Diagnóstico</label><textarea formControlName="diagnosis"></textarea></div>
+        <div class="form-group"><label>Indicaciones generales</label><textarea formControlName="instructions"></textarea></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Medicamento</label>
+          <select formControlName="medicineId">
+            <option [ngValue]="null">Selecciona</option>
+            <option *ngFor="let medicine of medicines" [ngValue]="medicine.id">{{ medicine.name }}</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Dosis</label><input formControlName="dosage" placeholder="500 mg"></div>
+        <div class="form-group"><label>Frecuencia</label><input formControlName="frequency" placeholder="Cada 8 horas"></div>
+        <div class="form-group"><label>Duración</label><input formControlName="duration" placeholder="5 días"></div>
+      </div>
+      <button class="btn btn-primary" type="submit">Guardar receta</button>
+    </form>
+  </section>
+
+  <section class="list-section">
+    <h2>Recetas médicas</h2>
+    <div class="empty-state" *ngIf="prescriptions.length === 0">No hay recetas disponibles.</div>
+    <div class="items-grid">
+      <article class="item-card" *ngFor="let prescription of prescriptions">
+        <div class="item-title">{{ prescription.patient || 'Mi receta' }}</div>
+        <p><strong>Médico:</strong> {{ prescription.doctor }}</p>
+        <p><strong>Diagnóstico:</strong> {{ prescription.diagnosis }}</p>
+        <p><strong>Indicaciones:</strong> {{ prescription.instructions }}</p>
+        <div *ngFor="let medicine of prescription.medications">
+          <strong>{{ medicine.name }}</strong>: {{ medicine.dosage }}, {{ medicine.frequency }}, {{ medicine.duration }}
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

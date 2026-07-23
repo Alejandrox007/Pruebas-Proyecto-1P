@@ -16,7 +16,10 @@
       <div class="form-row">
         <div class="form-group">
           <label for="specialty">Especialidad</label>
-          <input type="text" id="specialty" formControlName="specialty" class="form-control" placeholder="Cardiología">
+          <select id="specialty" formControlName="specialtyId" class="form-control">
+            <option [ngValue]="null">Selecciona</option>
+            <option *ngFor="let specialty of specialties" [ngValue]="specialty.id">{{ specialty.name }}</option>
+          </select>
         </div>
         <div class="form-group">
           <label for="licenseNumber">Número de Licencia</label>
@@ -27,12 +30,18 @@
       <div class="form-row">
         <div class="form-group">
           <label for="phone">Teléfono</label>
-          <input type="tel" id="phone" formControlName="phone" class="form-control" placeholder="+593 98765432">
+          <input type="tel" id="phone" formControlName="phone" class="form-control" placeholder="+593987654321">
         </div>
         <div class="form-group">
           <label for="email">Email</label>
           <input type="email" id="email" formControlName="email" class="form-control" placeholder="doctor@hospital.com">
         </div>
+      </div>
+
+      <div class="form-group" *ngIf="!editingId">
+        <label for="initialPassword">Contraseña inicial</label>
+        <input type="password" id="initialPassword" formControlName="initialPassword" class="form-control" autocomplete="new-password">
+        <small>El médico usará esta contraseña para su primer ingreso.</small>
       </div>
 
       <div class="form-actions">

@@ -2,9 +2,10 @@ const js = require('@eslint/js');
 const globals = require('globals');
 
 
-module.exports = {
+module.exports = [{
+  ignores: ['**/node_modules/**', '**/coverage/**', '**/dist/**']
+}, {
   files: ['src/**/*.js'],
-  ignores: ['node_modules/**', 'coverage/**'],
 
   languageOptions: {
     ecmaVersion: 2021,
@@ -29,4 +30,4 @@ module.exports = {
     'no-unused-vars': ['error'],
     'max-lines-per-function': ['error', { max: 130, skipBlankLines: true, skipComments: true }]
   }
-};
+}];

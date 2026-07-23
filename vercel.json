@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist/hospital-client" }
+    },
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node",
+      "config": { "includeFiles": ["src/**", "client/dist/hospital-client/**"] }
+    }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "api/index.js" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "client/dist/hospital-client/index.html" }
+  ]
+}

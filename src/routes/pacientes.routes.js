@@ -1,18 +1,13 @@
 const express = require('express');
-const { getAllPatients, addnewPatient, updatePatient, deletePatient } = require('../controllers/pacientes.controller');
+const controller = require('../controllers/pacientes.controller');
+const asyncHandler = require('../middleware/async-handler');
+const { authorize } = require('../middleware/auth');
+const validate = require('../middleware/validate');
+const schemas = require('../validation/schemas');
 
 const router = express.Router();
-
-// Ruta GET para obtener todos los pacientes
-router.get('/', getAllPatients);
-
-// Ruta POST para crear un nuevo paciente
-router.post('/', addnewPatient);
-
-// Ruta PUT para modificar un paciente mediante su id
-router.put('/:id', updatePatient);
-
-// Ruta DELETE para eliminar un paciente mediante su id
-router.delete('/:id', deletePatient);
+router.get('/', asyncHandler(controller.getAllPatients));
+router.put('/:id', authorize('admin', 'client'), validate({ params: schemas.idParams, body: schemas.patientUpdate }), asyncHandler(controller.updatePatient));
+router.delete('/:id', authorize('admin'), validate({ params: schemas.idParams }), asyncHandler(controller.deletePatient));
 
 module.exports = router;

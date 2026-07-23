@@ -330,7 +330,15 @@ body {
     }
 }
 
-.form-control {
+.form {
+    display: grid;
+    gap: 16px;
+}
+
+.form-control,
+.form-group input,
+.form-group select,
+.form-group textarea {
     width: 100%;
     padding: 12px 14px;
     border: 1.5px solid var(--border-color);
@@ -346,6 +354,11 @@ body {
         box-shadow: 0 0 0 3px rgba(31, 77, 74, 0.12);
         background: #ffffff;
     }
+}
+
+.form-group textarea {
+    min-height: 110px;
+    resize: vertical;
 }
 
 .form-actions {

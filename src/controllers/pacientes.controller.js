@@ -1,91 +1,69 @@
-
 const db = require('../db');
+const HttpError = require('../utils/http-error');
 
-// GET
+const selectPatient = `
+  SELECT id, user_id AS "userId", name, last_name AS "lastName", email,
+         phone, gender, birth_date AS "birthDate", illness
+  FROM pacientes`;
+
 async function getAllPatients(req, res) {
-  try {
-    const result = await db.query(
-      'SELECT id, name, last_name AS "lastName", email, gender, illness FROM pacientes ORDER BY id'
+  let result;
+  if (req.user.role === 'client') {
+    result = await db.query(`${selectPatient} WHERE user_id=$1`, [Number(req.user.sub)]);
+  } else if (req.user.role === 'doctor') {
+    result = await db.query(
+      `${selectPatient} WHERE id IN (
+        SELECT DISTINCT c.paciente_id FROM citas c
+        JOIN doctores d ON d.id=c.doctor_id WHERE d.user_id=$1
+      ) ORDER BY id`,
+      [Number(req.user.sub)]
     );
-    res.json(result.rows);
-  } catch (error) {
-    res.status(500).json({ message: 'Database error', error: error.message });
+  } else {
+    result = await db.query(`${selectPatient} ORDER BY id`);
   }
+  res.json(result.rows);
 }
 
-// POST
-async function addnewPatient(req, res) {
-  const { name, lastName, email, gender, illness } = req.body;
-
-  // Validación básica de entrada
-  if (!name || !lastName || !email || !gender || !illness) {
-    return res.status(400).json({ message: 'Name, Last Name, Email, Gender and Illness are required' });
-  }
-
-  try {
-    const result = await db.query(
-      'INSERT INTO pacientes (name, last_name, email, gender, illness) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, last_name AS "lastName", email, gender, illness',
-      [name, lastName, email, gender, illness]
-    );
-
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    res.status(500).json({ message: 'Database error', error: error.message });
-  }
-}
-
-// PUT
 async function updatePatient(req, res) {
-  const { id } = req.params;
-  const { name, lastName, email, gender, illness } = req.body;
-
-  try {
-    const existing = await db.query(
-      'SELECT id, name, last_name, email, gender, illness FROM pacientes WHERE id = $1',
-      [Number.parseInt(id, 10)]
-    );
-
-    if (existing.rowCount === 0) {
-      return res.status(404).json({ message: 'Patient not found' });
-    }
-
-    const current = existing.rows[0];
-    const result = await db.query(
-      'UPDATE pacientes SET name = $1, last_name = $2, email = $3, gender = $4, illness = $5 WHERE id = $6 RETURNING id, name, last_name AS "lastName", email, gender, illness',
-      [
-        name || current.name,
-        lastName || current.last_name,
-        email || current.email,
-        gender || current.gender,
-        illness || current.illness,
-        current.id
-      ]
-    );
-
-    res.json(result.rows[0]);
-  } catch (error) {
-    res.status(500).json({ message: 'Database error', error: error.message });
+  const result = await db.query(`${selectPatient} WHERE id=$1`, [req.params.id]);
+  if (result.rowCount === 0) throw new HttpError(404, 'Patient not found');
+  const current = result.rows[0];
+  if (req.user.role === 'client' && current.userId !== Number(req.user.sub)) {
+    throw new HttpError(403, 'You can only update your own profile');
   }
+
+  const updated = await db.query(
+    `UPDATE pacientes SET name=COALESCE($1, name), last_name=COALESCE($2, last_name),
+     phone=COALESCE($3, phone), gender=COALESCE($4, gender),
+     birth_date=CASE WHEN $5::boolean THEN $6 ELSE birth_date END,
+     illness=COALESCE($7, illness) WHERE id=$8
+     RETURNING id, user_id AS "userId", name, last_name AS "lastName", email,
+               phone, gender, birth_date AS "birthDate", illness`,
+    [
+      req.body.name,
+      req.body.lastName,
+      req.body.phone,
+      req.body.gender,
+      Object.hasOwn(req.body, 'birthDate'),
+      req.body.birthDate,
+      req.body.illness,
+      req.params.id
+    ]
+  );
+  res.json(updated.rows[0]);
 }
 
-// DELETE
 async function deletePatient(req, res) {
-  const { id } = req.params;
-
-  try {
-    const result = await db.query(
-      'DELETE FROM pacientes WHERE id = $1 RETURNING id, name, last_name AS "lastName", email, gender, illness',
-      [Number.parseInt(id, 10)]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'Patient not found' });
-    }
-
-    res.json(result.rows[0]);
-  } catch (error) {
-    res.status(500).json({ message: 'Database error', error: error.message });
-  }
+  const active = await db.query(
+    `SELECT 1 FROM citas WHERE paciente_id=$1 AND scheduled_at > NOW()
+     AND status IN ('pending', 'confirmed') LIMIT 1`,
+    [req.params.id]
+  );
+  if (active.rowCount > 0) throw new HttpError(409, 'Patient has upcoming appointments');
+  const deleted = await db.query(`${selectPatient} WHERE id=$1`, [req.params.id]);
+  if (deleted.rowCount === 0) throw new HttpError(404, 'Patient not found');
+  await db.query('DELETE FROM usuarios WHERE id=$1', [deleted.rows[0].userId]);
+  res.json(deleted.rows[0]);
 }
 
-module.exports = { getAllPatients, addnewPatient, updatePatient, deletePatient };
+module.exports = { deletePatient, getAllPatients, updatePatient };

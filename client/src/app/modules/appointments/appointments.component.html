@@ -1,0 +1,58 @@
+<div class="tab-content active">
+  <section class="form-section" *ngIf="role !== 'doctor'">
+    <h2>Agendar cita</h2>
+    <form [formGroup]="form" (ngSubmit)="create()" class="form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="appointment-doctor">Médico</label>
+          <select id="appointment-doctor" formControlName="doctorId">
+            <option [ngValue]="null">Selecciona</option>
+            <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
+              Dr. {{ doctor.name }} {{ doctor.lastName }} — {{ doctor.specialty }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group" *ngIf="role === 'admin'">
+          <label for="appointment-patient">Paciente</label>
+          <select id="appointment-patient" formControlName="patientId">
+            <option [ngValue]="null">Selecciona</option>
+            <option *ngFor="let patient of patients" [ngValue]="patient.id">{{ patient.name }} {{ patient.lastName }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="appointment-date">Fecha y hora</label>
+          <input id="appointment-date" type="datetime-local" step="1800" formControlName="scheduledAt">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="reason">Motivo</label>
+        <textarea id="reason" formControlName="reason" maxlength="500"></textarea>
+      </div>
+      <button class="btn btn-primary" type="submit">Agendar</button>
+    </form>
+  </section>
+
+  <section class="list-section">
+    <h2>{{ role === 'client' ? 'Mis citas' : 'Agenda de citas' }}</h2>
+    <div class="empty-state" *ngIf="appointments.length === 0">No hay citas registradas.</div>
+    <div class="items-grid">
+      <article class="item-card" *ngFor="let appointment of appointments">
+        <div class="item-header">
+          <div class="item-title">{{ appointment.scheduledAt | date:'medium' }}</div>
+          <span class="badge">{{ appointment.status }}</span>
+        </div>
+        <div class="item-details">
+          <div *ngIf="role !== 'doctor'"><strong>Médico:</strong> {{ appointment.doctor }} — {{ appointment.specialty }}</div>
+          <div *ngIf="role !== 'client'"><strong>Paciente:</strong> {{ appointment.patient }}</div>
+          <div><strong>Motivo:</strong> {{ appointment.reason }}</div>
+          <div *ngIf="appointment.notes"><strong>Notas:</strong> {{ appointment.notes }}</div>
+        </div>
+        <div class="form-actions" *ngIf="appointment.status === 'pending'">
+          <button *ngIf="role !== 'client'" class="btn btn-primary" (click)="changeStatus(appointment, 'confirmed')">Confirmar</button>
+          <button class="btn btn-secondary" (click)="changeStatus(appointment, 'cancelled')">Cancelar</button>
+        </div>
+        <button *ngIf="appointment.status === 'confirmed' && role !== 'client'" class="btn btn-primary" (click)="changeStatus(appointment, 'completed')">Marcar atendida</button>
+      </article>
+    </div>
+  </section>
+</div>

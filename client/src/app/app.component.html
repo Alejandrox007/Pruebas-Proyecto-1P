@@ -1,28 +1,29 @@
-<div class="app-shell">
-  <app-sidebar (tabSelected)="selectTab($event)"></app-sidebar>
-
-  <main class="main">
-    <header class="topbar">
-      <div>
-        <p class="eyebrow">Panel principal</p>
-        <h1>Hospital API Dashboard</h1>
-        <p>Interfaz gráfica para gestionar Doctores, Pacientes, Medicamentos y Especialidades</p>
-      </div>
-      <div class="topbar-actions" style="position: relative; z-index: 1;">
-        <div class="status-card" [ngClass]="'status-unknown'" id="serverStatusCard">
-          <span class="status-label">Entorno</span>
-          <span class="status-value" id="serverStatusValue">Comprobando...</span>
+<ng-container *ngIf="user$ | async as user; else authView">
+  <div class="app-shell">
+    <app-sidebar (tabSelected)="selectTab($event)"></app-sidebar>
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">{{ user.role }}</p>
+          <h1>Hospital Ops</h1>
+          <p>Gestión clínica segura para administradores, médicos y pacientes.</p>
         </div>
+        <div class="status-card">
+          <span class="status-label">Sesión</span>
+          <span class="status-value">{{ user.email }}</span>
+        </div>
+      </header>
+      <div class="content-wrapper">
+        <app-dashboard *ngIf="activeTab === 'dashboard' && user.role === 'admin'"></app-dashboard>
+        <app-doctors *ngIf="activeTab === 'doctors' && user.role === 'admin'"></app-doctors>
+        <app-patients *ngIf="activeTab === 'patients' && user.role !== 'client'"></app-patients>
+        <app-medicines *ngIf="activeTab === 'medicines' && user.role === 'admin'"></app-medicines>
+        <app-specialties *ngIf="activeTab === 'specialties' && user.role === 'admin'"></app-specialties>
+        <app-appointments *ngIf="activeTab === 'appointments'"></app-appointments>
+        <app-prescriptions *ngIf="activeTab === 'prescriptions'"></app-prescriptions>
       </div>
-    </header>
-
-    <div class="content-wrapper">
-      <app-doctors *ngIf="activeTab === 'doctors'"></app-doctors>
-      <app-patients *ngIf="activeTab === 'patients'"></app-patients>
-      <app-medicines *ngIf="activeTab === 'medicines'"></app-medicines>
-      <app-specialties *ngIf="activeTab === 'specialties'"></app-specialties>
-    </div>
-  </main>
-</div>
-
+    </main>
+  </div>
+</ng-container>
+<ng-template #authView><app-auth></app-auth></ng-template>
 <app-toast></app-toast>

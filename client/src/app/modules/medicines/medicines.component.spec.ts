@@ -103,8 +103,6 @@ describe('MedicinesComponent', () => {
     component.editMedicine(existingMedicine);
 
     expect(component.editingId).toBe(1);
-    expect(window.scrollTo).toHaveBeenCalled();
-
     component.form.patchValue({ name: 'Paracetamol Updated' });
 
     component.onSubmit();

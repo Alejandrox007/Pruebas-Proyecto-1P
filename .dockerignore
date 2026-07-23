@@ -1,0 +1,15 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+node_modules
+client/node_modules
+coverage
+client/coverage
+client/dist
+client/.angular
+.scannerwork
+*.log
+*.bundle
+*.zip

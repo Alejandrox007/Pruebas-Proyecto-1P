@@ -40,9 +40,7 @@ export class MedicinesComponent implements OnInit {
     this.loading = true;
     this.apiService.getMedicines().subscribe({
       next: (medicines) => {
-        if (Array.isArray(medicines)) {
-          this.medicines = medicines;
-        }
+        this.medicines = medicines;
         this.loading = false;
       },
       error: (error) => {
@@ -91,7 +89,6 @@ export class MedicinesComponent implements OnInit {
       name: medicine.name,
       description: medicine.description
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   deleteMedicine(id: number | undefined): void {

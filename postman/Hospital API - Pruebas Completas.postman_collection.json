@@ -1,490 +1,189 @@
 {
   "info": {
-    "_postman_id": "fa755978-b992-4234-9f8d-c752f954408e",
-    "name": "Hospital API - Pruebas Completas",
-    "description": "Colección completa de pruebas para la API del Sistema Hospitalario",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "55554846",
-    "_collection_link": "https://go.postman.co/collection/55554846-fa755978-b992-4234-9f8d-c752f954408e?source=collection_link"
+    "_postman_id": "a5391f60-07d1-4de3-8be9-7d279d34f603",
+    "name": "Hospital Ops - Flujo de Negocio Seguro",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "adminEmail", "value": "admin@hospital.local" },
+    { "key": "adminPassword", "value": "ChangeMe123!" },
+    { "key": "password", "value": "SecurePass1!" }
+  ],
   "item": [
     {
-      "name": "Pacientes",
-      "item": [
-        {
-          "name": "Listar Todos los Pacientes",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:3000/api/pacientes",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "pacientes"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Crear Nuevo Paciente",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Juan\",\n  \"lastName\": \"Pérez\",\n  \"email\": \"juan.perez@email.com\",\n  \"gender\": \"Masculino\",\n  \"illness\": \"Gripe\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/pacientes",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "pacientes"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Actualizar Paciente",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Juan\",\n  \"lastName\": \"Pérez Actualizado\",\n  \"email\": \"juan.perez.actualizado@email.com\",\n  \"gender\": \"Masculino\",\n  \"illness\": \"Recuperado\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/pacientes/6",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "pacientes",
-                "6"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Eliminar Paciente",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:3000/api/pacientes/6",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "pacientes",
-                "6"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
+      "name": "01 Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/health" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('API operativa', () => pm.response.to.have.status(200));",
+        "pm.test('Sin divulgación de Express', () => pm.expect(pm.response.headers.has('X-Powered-By')).to.be.false);"
+      ] } }]
     },
     {
-      "name": "Medicamentos",
-      "item": [
-        {
-          "name": "Listar Todos los Medicamentos",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:3000/api/medicamentos",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "medicamentos"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Crear Nuevo Medicamento",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Paracetamol\",\n  \"description\": \"Analgésico y antipirético\",\n  \"price\": 15.50,\n  \"quantity\": 100,\n  \"category\": \"Analgésicos\",\n  \"laboratory\": \"Laboratorio ABC\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/medicamentos",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "medicamentos"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Actualizar Medicamento",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Paracetamol\",\n  \"description\": \"Analgésico y antipirético - Actualizado\",\n  \"price\": 18.00,\n  \"quantity\": 150,\n  \"category\": \"Analgésicos\",\n  \"laboratory\": \"Laboratorio ABC\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/medicamentos/6",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "medicamentos",
-                "6"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Eliminar Medicamento",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:3000/api/medicamentos/6",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "medicamentos",
-                "6"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
+      "name": "02 Login administrador",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"email\":\"{{adminEmail}}\",\"password\":\"{{adminPassword}}\"}" },
+        "url": "{{baseUrl}}/api/auth/login"
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Login admin exitoso', () => pm.response.to.have.status(200));",
+        "const json=pm.response.json(); pm.collectionVariables.set('adminToken',json.token); pm.expect(json.user.role).to.eql('admin');"
+      ] } }]
     },
     {
-      "name": "Doctores",
-      "item": [
-        {
-          "name": "Listar Todos los Doctores",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:3000/api/doctores",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "doctores"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Crear Nuevo Doctor",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Carlos\",\n  \"lastName\": \"Pérez\",\n  \"specialty\": \"Cardiología\",\n  \"phone\": \"555-1234\",\n  \"email\": \"carlos.perez@hospital.com\",\n  \"licenseNumber\": \"MED-123435\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/doctores",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "doctores"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Actualizar Doctor",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Carlos\",\n  \"lastName\": \"Pérez Actualizado\",\n  \"specialty\": \"Cardiología Avanzada\",\n  \"phone\": \"555-9999\",\n  \"email\": \"carlos.perez@hospital.com\",\n  \"licenseNumber\": \"MED-1232345\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/doctores/6",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "doctores",
-                "6"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Eliminar Doctor",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:3000/api/doctores/6",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "doctores",
-                "6"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
+      "name": "03 Crear especialidad",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{\"name\":\"{{specialtyName}}\",\"description\":\"Atención cardiovascular\"}" },
+        "url": "{{baseUrl}}/api/especialidades"
+      },
+      "event": [{ "listen": "prerequest", "script": { "exec": [
+        "pm.collectionVariables.set('specialtyName',`Cardiología ${pm.variables.replaceIn('{{$randomFirstName}}')}`);"
+      ] } }, { "listen": "test", "script": { "exec": [
+        "pm.test('Especialidad creada', () => pm.response.to.have.status(201));",
+        "pm.collectionVariables.set('specialtyId',pm.response.json().id);"
+      ] } }]
     },
     {
-      "name": "Especialidades",
-      "item": [
-        {
-          "name": "Listar Todas las Especialidades",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:3000/api/especialidades",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "especialidades"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Crear Nueva Especialidad",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Cardiología-pool\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/especialidades",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "especialidades"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Actualizar Especialidad",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Cardiología uwu\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/especialidades/10",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "especialidades",
-                "10"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Eliminar Especialidad",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:3000/api/especialidades/69486426b32cdbca89d79b00",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "especialidades",
-                "69486426b32cdbca89d79b00"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    }
-  ],
-  "variable": [
+      "name": "04 Crear medicamento",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{\"name\":\"Paracetamol {{$timestamp}}\",\"description\":\"Analgésico\"}" },
+        "url": "{{baseUrl}}/api/medicamentos"
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Medicamento creado', () => pm.response.to.have.status(201));",
+        "pm.collectionVariables.set('medicineId',pm.response.json().id);"
+      ] } }]
+    },
     {
-      "key": "base_url",
-      "value": "http://localhost:3000"
+      "name": "05 Crear cuenta de médico",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{\"name\":\"Juan\",\"lastName\":\"Pérez\",\"specialtyId\":{{specialtyId}},\"phone\":\"+593999999991\",\"email\":\"doctor.{{$timestamp}}@test.com\",\"licenseNumber\":\"MED-{{$timestamp}}\",\"initialPassword\":\"{{password}}\"}" },
+        "url": "{{baseUrl}}/api/doctores"
+      },
+      "event": [{ "listen": "prerequest", "script": { "exec": [
+        "const email=`doctor.${Date.now()}@test.com`; pm.collectionVariables.set('doctorEmail',email);",
+        "pm.request.body.raw=pm.request.body.raw.replace(/doctor\\.\\{\\{\\$timestamp\\}\\}@test\\.com/,email);"
+      ] } }, { "listen": "test", "script": { "exec": [
+        "pm.test('Médico creado únicamente por admin', () => pm.response.to.have.status(201));",
+        "pm.collectionVariables.set('doctorId',pm.response.json().id);"
+      ] } }]
+    },
+    {
+      "name": "06 Registro de paciente",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"name\":\"Ana\",\"lastName\":\"López\",\"email\":\"{{clientEmail}}\",\"password\":\"{{password}}\",\"phone\":\"+593999999992\",\"gender\":\"Femenino\"}" },
+        "url": "{{baseUrl}}/api/auth/register"
+      },
+      "event": [{ "listen": "prerequest", "script": { "exec": [
+        "pm.collectionVariables.set('clientEmail',`patient.${Date.now()}@test.com`);"
+      ] } }, { "listen": "test", "script": { "exec": [
+        "pm.test('Registro crea rol client', () => pm.response.to.have.status(201));",
+        "const json=pm.response.json(); pm.expect(json.user.role).to.eql('client'); pm.collectionVariables.set('clientToken',json.token);"
+      ] } }]
+    },
+    {
+      "name": "07 Paciente no puede crear médicos",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{clientToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{\"name\":\"Falso\",\"lastName\":\"Médico\",\"specialtyId\":{{specialtyId}},\"phone\":\"+593999999993\",\"email\":\"fake@test.com\",\"licenseNumber\":\"FAKE-1\",\"initialPassword\":\"{{password}}\"}" },
+        "url": "{{baseUrl}}/api/doctores"
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('RBAC bloquea al paciente', () => pm.response.to.have.status(403));"
+      ] } }]
+    },
+    {
+      "name": "08 Agendar cita",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{clientToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{\"doctorId\":{{doctorId}},\"scheduledAt\":\"{{appointmentDate}}\",\"reason\":\"Consulta cardiovascular preventiva\"}" },
+        "url": "{{baseUrl}}/api/citas"
+      },
+      "event": [{ "listen": "prerequest", "script": { "exec": [
+        "const d=new Date(); d.setUTCDate(d.getUTCDate()+4); d.setUTCHours(15,0,0,0); while([0,6].includes(new Date(d.getTime()-18000000).getUTCDay())) d.setUTCDate(d.getUTCDate()+1); pm.collectionVariables.set('appointmentDate',d.toISOString());"
+      ] } }, { "listen": "test", "script": { "exec": [
+        "pm.test('Cita creada', () => pm.response.to.have.status(201));",
+        "pm.collectionVariables.set('appointmentId',pm.response.json().id);"
+      ] } }]
+    },
+    {
+      "name": "09 Login médico",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"email\":\"{{doctorEmail}}\",\"password\":\"{{password}}\"}" },
+        "url": "{{baseUrl}}/api/auth/login"
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Login médico exitoso', () => pm.response.to.have.status(200));",
+        "pm.collectionVariables.set('doctorToken',pm.response.json().token);"
+      ] } }]
+    },
+    {
+      "name": "10 Confirmar cita",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{doctorToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{\"status\":\"confirmed\",\"notes\":\"Paciente confirmado\"}" },
+        "url": "{{baseUrl}}/api/citas/{{appointmentId}}"
+      },
+      "event": [{ "listen": "test", "script": { "exec": ["pm.test('Cita confirmada', () => pm.expect(pm.response.json().status).to.eql('confirmed'));"] } }]
+    },
+    {
+      "name": "11 Completar cita",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{doctorToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{\"status\":\"completed\"}" },
+        "url": "{{baseUrl}}/api/citas/{{appointmentId}}"
+      },
+      "event": [{ "listen": "test", "script": { "exec": ["pm.test('Cita completada', () => pm.expect(pm.response.json().status).to.eql('completed'));"] } }]
+    },
+    {
+      "name": "12 Emitir receta",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{doctorToken}}" }
+        ],
+        "body": { "mode": "raw", "raw": "{\"appointmentId\":{{appointmentId}},\"diagnosis\":\"Control preventivo\",\"instructions\":\"Mantener hidratación\",\"medications\":[{\"medicineId\":{{medicineId}},\"dosage\":\"500 mg\",\"frequency\":\"Cada 8 horas\",\"duration\":\"3 días\"}]}" },
+        "url": "{{baseUrl}}/api/recetas"
+      },
+      "event": [{ "listen": "test", "script": { "exec": ["pm.test('Receta ligada a cita completada', () => pm.response.to.have.status(201));"] } }]
     }
   ]
 }

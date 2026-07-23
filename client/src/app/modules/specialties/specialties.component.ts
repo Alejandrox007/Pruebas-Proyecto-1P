@@ -40,9 +40,7 @@ export class SpecialtiesComponent implements OnInit {
     this.loading = true;
     this.apiService.getSpecialties().subscribe({
       next: (specialties) => {
-        if (Array.isArray(specialties)) {
-          this.specialties = specialties;
-        }
+        this.specialties = specialties;
         this.loading = false;
       },
       error: (error) => {
@@ -91,7 +89,6 @@ export class SpecialtiesComponent implements OnInit {
       name: specialty.name,
       description: specialty.description
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   deleteSpecialty(id: number | undefined): void {

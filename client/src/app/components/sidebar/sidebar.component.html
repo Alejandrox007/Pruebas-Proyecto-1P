@@ -3,47 +3,29 @@
     <div class="brand-mark">H</div>
     <div class="brand-text">
       <span class="brand-title">Hospital Ops</span>
-      <span class="brand-subtitle">Dashboard</span>
+      <span class="brand-subtitle">{{ user.role }}</span>
     </div>
   </div>
 
   <div class="sidebar-section">
-    <p class="sidebar-label">Modulos</p>
+    <p class="sidebar-label">Módulos</p>
     <div class="tabs sidebar-tabs">
-      <button 
-        class="tab-button" 
-        [class.active]="activeTab === 'doctors'"
-        (click)="selectTab('doctors')">
-        Doctores
-      </button>
-      <button 
-        class="tab-button" 
-        [class.active]="activeTab === 'patients'"
-        (click)="selectTab('patients')">
-        Pacientes
-      </button>
-      <button 
-        class="tab-button" 
-        [class.active]="activeTab === 'medicines'"
-        (click)="selectTab('medicines')">
-        Medicamentos
-      </button>
-      <button 
-        class="tab-button" 
-        [class.active]="activeTab === 'specialties'"
-        (click)="selectTab('specialties')">
-        Especialidades
-      </button>
+      <button *ngIf="user.role === 'admin'" class="tab-button" [class.active]="activeTab === 'dashboard'" (click)="selectTab('dashboard')">Resumen</button>
+      <button *ngIf="user.role === 'admin'" class="tab-button" [class.active]="activeTab === 'doctors'" (click)="selectTab('doctors')">Médicos</button>
+      <button *ngIf="user.role !== 'client'" class="tab-button" [class.active]="activeTab === 'patients'" (click)="selectTab('patients')">Pacientes</button>
+      <button *ngIf="user.role === 'admin'" class="tab-button" [class.active]="activeTab === 'medicines'" (click)="selectTab('medicines')">Medicamentos</button>
+      <button *ngIf="user.role === 'admin'" class="tab-button" [class.active]="activeTab === 'specialties'" (click)="selectTab('specialties')">Especialidades</button>
+      <button class="tab-button" [class.active]="activeTab === 'appointments'" (click)="selectTab('appointments')">Citas</button>
+      <button class="tab-button" [class.active]="activeTab === 'prescriptions'" (click)="selectTab('prescriptions')">Recetas</button>
     </div>
   </div>
 
   <div class="sidebar-footer">
-    <div class="status-card status-card-sidebar" 
-         [ngClass]="(serverStatus$ | async) === true ? 'status-online' : (serverStatus$ | async) === false ? 'status-offline' : 'status-unknown'">
+    <div class="status-card status-card-sidebar"
+      [ngClass]="(serverStatus$ | async) === true ? 'status-online' : (serverStatus$ | async) === false ? 'status-offline' : 'status-unknown'">
       <span class="status-label">Servidor</span>
-      <span class="status-value">
-        {{ (serverStatus$ | async) === true ? 'Operativo' : (serverStatus$ | async) === false ? 'Sin conexión' : 'Comprobando...' }}
-      </span>
+      <span class="status-value">{{ (serverStatus$ | async) === true ? 'Operativo' : (serverStatus$ | async) === false ? 'Sin conexión' : 'Comprobando…' }}</span>
     </div>
+    <button class="tab-button logout" type="button" (click)="logout()">Cerrar sesión</button>
   </div>
 </aside>
