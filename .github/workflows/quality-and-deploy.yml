@@ -13,6 +13,9 @@ jobs:
   quality:
     name: Lint, tests, coverage, build, SonarQube and security
     runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -33,14 +36,11 @@ jobs:
       - run: npm run security:audit
       - name: Validate production SonarQube configuration
         if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           test -n "$SONAR_TOKEN" || { echo "SONAR_TOKEN is required"; exit 1; }
           test -n "$SONAR_HOST_URL" || { echo "SONAR_HOST_URL is required"; exit 1; }
       - name: SonarQube quality gate
-        if: ${{ secrets.SONAR_TOKEN != '' }}
+        if: ${{ env.SONAR_TOKEN != '' }}
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
