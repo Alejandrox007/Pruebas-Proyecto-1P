@@ -3,5 +3,11 @@
     "api/**/*.js": {
       "includeFiles": "../client/dist/**"
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.js"
+    }
+  ]
 }
