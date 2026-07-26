@@ -41,12 +41,30 @@ jobs:
           test -n "$SONAR_HOST_URL" || { echo "SONAR_HOST_URL is required"; exit 1; }
       - name: SonarQube quality gate
         if: ${{ env.SONAR_TOKEN != '' }}
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@v7
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       - name: Validate production Docker image
         run: docker build --tag hospital-api:${{ github.sha }} .
+
+      - name: Verify SonarQube access
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          echo "Validando token..."
+          curl --fail --silent \
+            -H "Authorization: Bearer $SONAR_TOKEN" \
+            "https://sonarcloud.io/api/authentication/validate"
+
+          echo ""
+          echo "Validando acceso al proyecto..."
+          curl --fail --silent \
+            -H "Authorization: Bearer $SONAR_TOKEN" \
+            "https://sonarcloud.io/api/components/show?component=alejandrox007_pruebas-proyecto-1p" \
+            > /dev/null
+
+          echo "Token y acceso al proyecto correctos"
 
   api-e2e:
     name: Postman, JMeter and k6
