@@ -1,6 +1,6 @@
 # Hospital Ops
 
-Aplicación clínica funcional con API Express, PostgreSQL y cliente Angular. Incluye autenticación real, autorización por roles, reglas para citas y recetas, validación estricta y una compuerta CI/CD antes del despliegue en Vercel o Render.
+Aplicación clínica funcional con API Express, PostgreSQL y cliente Angular. Incluye autenticación real, autorización por roles, reglas para citas y recetas, validación estricta y una compuerta CI/CD antes del despliegue en Vercel.
 
 ## Roles y reglas
 
@@ -98,8 +98,5 @@ Para GitHub Actions configura estos secretos:
 
 - SonarQube: `SONAR_TOKEN` y `SONAR_HOST_URL`.
 - Vercel: `VERCEL_TOKEN`, `VERCEL_ORG_ID` y `VERCEL_PROJECT_ID`.
-- Render: `RENDER_DEPLOY_HOOK_URL`.
 
-`render.yaml` permite crear en Render el servicio Docker y su PostgreSQL mediante un Blueprint. Configura allí `ADMIN_PASSWORD` y `ALLOWED_ORIGINS`; después copia el Deploy Hook del servicio al secreto `RENDER_DEPLOY_HOOK_URL`.
-
-El workflow ejecuta lint, pruebas, cobertura, build, auditoría, SonarQube, Postman, JMeter, k6 y una compilación real de la imagen Docker. Los despliegues de Vercel y Render solo se ejecutan en `main` cuando todas esas validaciones pasan.
+El workflow ejecuta lint, pruebas, cobertura, build, auditoría, SonarQube, Postman, JMeter y k6. El despliegue de Vercel solo se ejecuta en `main` cuando todas esas validaciones pasan.

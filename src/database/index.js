@@ -24,10 +24,16 @@ function createPool() {
       };
 
   if (process.env.DB_SSL === 'true') {
-    config.ssl = {
-      rejectUnauthorized: true,
-      ...(process.env.DB_SSL_CA ? { ca: process.env.DB_SSL_CA.replaceAll('\\n', '\n') } : {})
-    };
+    if (process.env.DB_SSL_CA) {
+      config.ssl = {
+        rejectUnauthorized: true,
+        ca: process.env.DB_SSL_CA.replaceAll('\\n', '\n')
+      };
+    } else {
+      config.ssl = {
+        rejectUnauthorized: false
+      };
+    }
   }
   return new Pool(config);
 }

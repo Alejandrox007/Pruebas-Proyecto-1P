@@ -12,3 +12,4 @@ test-logs.json
 *.log
 *.zip
 *.bundle
+.vercel/

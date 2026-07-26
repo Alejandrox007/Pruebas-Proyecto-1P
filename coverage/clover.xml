@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1784838161060" clover="3.2.0">
-  <project timestamp="1784838161060" name="All files">
+<coverage generated="1785085392451" clover="3.2.0">
+  <project timestamp="1785085392451" name="All files">
     <metrics statements="436" coveredstatements="436" conditionals="177" coveredconditionals="177" methods="60" coveredmethods="60" elements="673" coveredelements="673" complexity="0" loc="436" ncloc="436" packages="6" files="24" classes="24"/>
     <package name="src">
       <metrics statements="51" coveredstatements="51" conditionals="12" coveredconditionals="12" methods="4" coveredmethods="4"/>
-      <file name="app.js" path="/home/grimroot/Downloads/Hospital-Ops/src/app.js">
+      <file name="app.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/app.js">
         <metrics statements="50" coveredstatements="50" conditionals="12" coveredconditionals="12" methods="4" coveredmethods="4"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -57,14 +57,14 @@
         <line num="77" count="2" type="stmt"/>
         <line num="79" count="2" type="stmt"/>
       </file>
-      <file name="db.js" path="/home/grimroot/Downloads/Hospital-Ops/src/db.js">
+      <file name="db.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/db.js">
         <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
       </file>
     </package>
     <package name="src.controllers">
       <metrics statements="225" coveredstatements="225" conditionals="132" coveredconditionals="132" methods="38" coveredmethods="38"/>
-      <file name="admin.controller.js" path="/home/grimroot/Downloads/Hospital-Ops/src/controllers/admin.controller.js">
+      <file name="admin.controller.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/controllers/admin.controller.js">
         <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
         <line num="1" count="2" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
@@ -73,7 +73,7 @@
         <line num="16" count="1" type="stmt"/>
         <line num="19" count="2" type="stmt"/>
       </file>
-      <file name="auth.controller.js" path="/home/grimroot/Downloads/Hospital-Ops/src/controllers/auth.controller.js">
+      <file name="auth.controller.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/controllers/auth.controller.js">
         <metrics statements="25" coveredstatements="25" conditionals="13" coveredconditionals="13" methods="5" coveredmethods="5"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -101,7 +101,7 @@
         <line num="60" count="1" type="stmt"/>
         <line num="63" count="2" type="stmt"/>
       </file>
-      <file name="citas.controller.js" path="/home/grimroot/Downloads/Hospital-Ops/src/controllers/citas.controller.js">
+      <file name="citas.controller.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/controllers/citas.controller.js">
         <metrics statements="60" coveredstatements="60" conditionals="43" coveredconditionals="43" methods="5" coveredmethods="5"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -164,7 +164,7 @@
         <line num="119" count="3" type="stmt"/>
         <line num="122" count="2" type="stmt"/>
       </file>
-      <file name="doctores.controller.js" path="/home/grimroot/Downloads/Hospital-Ops/src/controllers/doctores.controller.js">
+      <file name="doctores.controller.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/controllers/doctores.controller.js">
         <metrics statements="38" coveredstatements="38" conditionals="24" coveredconditionals="24" methods="7" coveredmethods="7"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -205,7 +205,7 @@
         <line num="91" count="1" type="stmt"/>
         <line num="94" count="2" type="stmt"/>
       </file>
-      <file name="especialidades.controller.js" path="/home/grimroot/Downloads/Hospital-Ops/src/controllers/especialidades.controller.js">
+      <file name="especialidades.controller.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/controllers/especialidades.controller.js">
         <metrics statements="15" coveredstatements="15" conditionals="10" coveredconditionals="10" methods="4" coveredmethods="4"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -223,7 +223,7 @@
         <line num="34" count="1" type="stmt"/>
         <line num="37" count="2" type="stmt"/>
       </file>
-      <file name="medicamentos.controller.js" path="/home/grimroot/Downloads/Hospital-Ops/src/controllers/medicamentos.controller.js">
+      <file name="medicamentos.controller.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/controllers/medicamentos.controller.js">
         <metrics statements="15" coveredstatements="15" conditionals="12" coveredconditionals="12" methods="4" coveredmethods="4"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -241,7 +241,7 @@
         <line num="44" count="1" type="stmt"/>
         <line num="47" count="2" type="stmt"/>
       </file>
-      <file name="pacientes.controller.js" path="/home/grimroot/Downloads/Hospital-Ops/src/controllers/pacientes.controller.js">
+      <file name="pacientes.controller.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/controllers/pacientes.controller.js">
         <metrics statements="23" coveredstatements="23" conditionals="14" coveredconditionals="14" methods="3" coveredmethods="3"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -267,7 +267,7 @@
         <line num="66" count="1" type="stmt"/>
         <line num="69" count="2" type="stmt"/>
       </file>
-      <file name="recetas.controller.js" path="/home/grimroot/Downloads/Hospital-Ops/src/controllers/recetas.controller.js">
+      <file name="recetas.controller.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/controllers/recetas.controller.js">
         <metrics statements="43" coveredstatements="43" conditionals="16" coveredconditionals="16" methods="8" coveredmethods="8"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -316,12 +316,12 @@
     </package>
     <package name="src.middleware">
       <metrics statements="43" coveredstatements="43" conditionals="31" coveredconditionals="31" methods="12" coveredmethods="12"/>
-      <file name="async-handler.js" path="/home/grimroot/Downloads/Hospital-Ops/src/middleware/async-handler.js">
+      <file name="async-handler.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/middleware/async-handler.js">
         <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="84" type="stmt"/>
       </file>
-      <file name="auth.js" path="/home/grimroot/Downloads/Hospital-Ops/src/middleware/auth.js">
+      <file name="auth.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/middleware/auth.js">
         <metrics statements="19" coveredstatements="19" conditionals="17" coveredconditionals="17" methods="5" coveredmethods="5"/>
         <line num="1" count="2" type="stmt"/>
         <line num="4" count="88" type="stmt"/>
@@ -343,7 +343,7 @@
         <line num="37" count="6" type="stmt"/>
         <line num="44" count="2" type="stmt"/>
       </file>
-      <file name="error-handler.js" path="/home/grimroot/Downloads/Hospital-Ops/src/middleware/error-handler.js">
+      <file name="error-handler.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/middleware/error-handler.js">
         <metrics statements="10" coveredstatements="10" conditionals="8" coveredconditionals="8" methods="2" coveredmethods="2"/>
         <line num="2" count="1" type="stmt"/>
         <line num="6" count="42" type="cond" truecount="2" falsecount="0"/>
@@ -356,7 +356,7 @@
         <line num="20" count="1" type="stmt"/>
         <line num="23" count="2" type="stmt"/>
       </file>
-      <file name="validate.js" path="/home/grimroot/Downloads/Hospital-Ops/src/middleware/validate.js">
+      <file name="validate.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/middleware/validate.js">
         <metrics statements="12" coveredstatements="12" conditionals="6" coveredconditionals="6" methods="3" coveredmethods="3"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="34" type="stmt"/>
@@ -374,7 +374,7 @@
     </package>
     <package name="src.routes">
       <metrics statements="87" coveredstatements="87" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-      <file name="admin.routes.js" path="/home/grimroot/Downloads/Hospital-Ops/src/routes/admin.routes.js">
+      <file name="admin.routes.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/routes/admin.routes.js">
         <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -383,7 +383,7 @@
         <line num="6" count="2" type="stmt"/>
         <line num="8" count="2" type="stmt"/>
       </file>
-      <file name="auth.routes.js" path="/home/grimroot/Downloads/Hospital-Ops/src/routes/auth.routes.js">
+      <file name="auth.routes.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/routes/auth.routes.js">
         <metrics statements="13" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -399,7 +399,7 @@
         <line num="20" count="2" type="stmt"/>
         <line num="22" count="2" type="stmt"/>
       </file>
-      <file name="citas.routes.js" path="/home/grimroot/Downloads/Hospital-Ops/src/routes/citas.routes.js">
+      <file name="citas.routes.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/routes/citas.routes.js">
         <metrics statements="11" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -413,7 +413,7 @@
         <line num="11" count="2" type="stmt"/>
         <line num="13" count="2" type="stmt"/>
       </file>
-      <file name="doctores.routes.js" path="/home/grimroot/Downloads/Hospital-Ops/src/routes/doctores.routes.js">
+      <file name="doctores.routes.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/routes/doctores.routes.js">
         <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -428,7 +428,7 @@
         <line num="12" count="2" type="stmt"/>
         <line num="14" count="2" type="stmt"/>
       </file>
-      <file name="especialidades.routes.js" path="/home/grimroot/Downloads/Hospital-Ops/src/routes/especialidades.routes.js">
+      <file name="especialidades.routes.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/routes/especialidades.routes.js">
         <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -443,7 +443,7 @@
         <line num="12" count="2" type="stmt"/>
         <line num="14" count="2" type="stmt"/>
       </file>
-      <file name="medicamentos.routes.js" path="/home/grimroot/Downloads/Hospital-Ops/src/routes/medicamentos.routes.js">
+      <file name="medicamentos.routes.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/routes/medicamentos.routes.js">
         <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -458,7 +458,7 @@
         <line num="12" count="2" type="stmt"/>
         <line num="14" count="2" type="stmt"/>
       </file>
-      <file name="pacientes.routes.js" path="/home/grimroot/Downloads/Hospital-Ops/src/routes/pacientes.routes.js">
+      <file name="pacientes.routes.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/routes/pacientes.routes.js">
         <metrics statements="11" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -472,7 +472,7 @@
         <line num="11" count="2" type="stmt"/>
         <line num="13" count="2" type="stmt"/>
       </file>
-      <file name="recetas.routes.js" path="/home/grimroot/Downloads/Hospital-Ops/src/routes/recetas.routes.js">
+      <file name="recetas.routes.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/routes/recetas.routes.js">
         <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -488,7 +488,7 @@
     </package>
     <package name="src.utils">
       <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-      <file name="http-error.js" path="/home/grimroot/Downloads/Hospital-Ops/src/utils/http-error.js">
+      <file name="http-error.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/utils/http-error.js">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="3" count="37" type="stmt"/>
         <line num="4" count="37" type="stmt"/>
@@ -498,7 +498,7 @@
     </package>
     <package name="src.validation">
       <metrics statements="26" coveredstatements="26" conditionals="2" coveredconditionals="2" methods="5" coveredmethods="5"/>
-      <file name="schemas.js" path="/home/grimroot/Downloads/Hospital-Ops/src/validation/schemas.js">
+      <file name="schemas.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/validation/schemas.js">
         <metrics statements="26" coveredstatements="26" conditionals="2" coveredconditionals="2" methods="5" coveredmethods="5"/>
         <line num="1" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>

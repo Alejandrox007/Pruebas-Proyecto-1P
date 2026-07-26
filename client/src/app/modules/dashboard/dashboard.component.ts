@@ -17,7 +17,10 @@ import { ApiService } from '../../services/api.service';
       </div>
     </section>
   `,
-  styles: ['.metric{font-size:2.4rem;font-weight:700;color:var(--accent)}']
+  styles: [
+    '.metric { font-size: 2.4rem; font-weight: 700; color: var(--accent); }',
+    '.status-label { color: var(--text-muted); }'
+  ]
 })
 export class DashboardComponent implements OnInit {
   summary: Record<string, number> = {};

@@ -7,6 +7,6 @@
 - k6: smoke, carga gradual y estrés con umbrales que hacen fallar CI.
 - SonarQube: consume los reportes LCOV de backend y frontend, espera el Quality Gate y bloquea los despliegues si falla.
 - Docker: el workflow compila la imagen de producción para detectar errores antes del despliegue.
-- Vercel y Render: solo despliegan desde `main` después de superar toda la compuerta de calidad.
+- Vercel: solo despliega desde `main` después de superar toda la compuerta de calidad.
 
 Los comandos exactos están documentados en [README.md](README.md).
