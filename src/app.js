@@ -37,7 +37,11 @@ const allowedOrigins = (process.env.ALLOWED_ORIGINS || defaultOrigins.join(','))
 
 app.use((req, res, next) => {
   const origin = req.get('origin');
-  if (origin && !allowedOrigins.includes(origin)) {
+  const host = req.get('host');
+  
+  // Allow if no origin (non-CORS), if origin is in allowed list, or if origin matches the host
+  const isSameHost = origin && origin.includes(host);
+  if (origin && !allowedOrigins.includes(origin) && !isSameHost) {
     return res.status(403).json({ message: 'Origin is not allowed' });
   }
   if (origin) res.set('Access-Control-Allow-Origin', origin);
