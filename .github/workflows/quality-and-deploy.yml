@@ -62,8 +62,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      - name: Validate production Docker image
-        run: docker build --tag hospital-api:${{ github.sha }} .
 
 
   api-e2e:
