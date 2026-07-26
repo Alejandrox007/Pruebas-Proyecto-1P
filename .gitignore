@@ -13,3 +13,5 @@ test-logs.json
 *.zip
 *.bundle
 .vercel/
+.vercel
+.env*
