@@ -56,4 +56,20 @@ describe('PrescriptionsComponent', () => {
     component.create();
     expect(toast.showToast).toHaveBeenCalled();
   });
+
+  it('covers translateError and fallback scenarios', () => {
+    const { component, api, toast } = setup();
+
+    expect(component.translateError('')).toBe('');
+    expect(component.translateError('Appointment not found')).toBe('Cita no encontrada.');
+    expect(component.translateError('Random error')).toBe('Random error');
+
+    component.form.setValue({
+      appointmentId: 1, diagnosis: 'Gripe', instructions: 'Reposo',
+      medicineId: 1, dosage: '500 mg', frequency: 'Cada 8 horas', duration: '3 días'
+    });
+    api.createPrescription.mockReturnValue(throwError(() => ({ error: {} })));
+    component.create();
+    expect(toast.showToast).toHaveBeenCalledWith('No se pudo registrar', 'error');
+  });
 });
