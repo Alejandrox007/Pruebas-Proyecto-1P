@@ -21,9 +21,27 @@
             <option *ngFor="let medicine of medicines" [ngValue]="medicine.id">{{ medicine.name }}</option>
           </select>
         </div>
-        <div class="form-group"><label>Dosis</label><input formControlName="dosage" placeholder="500 mg"></div>
-        <div class="form-group"><label>Frecuencia</label><input formControlName="frequency" placeholder="Cada 8 horas"></div>
-        <div class="form-group"><label>Duración</label><input formControlName="duration" placeholder="5 días"></div>
+        <div class="form-group">
+          <label>Dosis</label>
+          <select formControlName="dosage">
+            <option value="">Selecciona dosis</option>
+            <option *ngFor="let item of dosages" [value]="item">{{ item }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Frecuencia</label>
+          <select formControlName="frequency">
+            <option value="">Selecciona frecuencia</option>
+            <option *ngFor="let item of frequencies" [value]="item">{{ item }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Duración</label>
+          <select formControlName="duration">
+            <option value="">Selecciona duración</option>
+            <option *ngFor="let item of durations" [value]="item">{{ item }}</option>
+          </select>
+        </div>
       </div>
       <button class="btn btn-primary" type="submit">Guardar receta</button>
     </form>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1785085392451" clover="3.2.0">
-  <project timestamp="1785085392451" name="All files">
+<coverage generated="1785214520681" clover="3.2.0">
+  <project timestamp="1785214520681" name="All files">
     <metrics statements="436" coveredstatements="436" conditionals="177" coveredconditionals="177" methods="60" coveredmethods="60" elements="673" coveredelements="673" complexity="0" loc="436" ncloc="436" packages="6" files="24" classes="24"/>
     <package name="src">
       <metrics statements="51" coveredstatements="51" conditionals="12" coveredconditionals="12" methods="4" coveredmethods="4"/>
@@ -346,9 +346,9 @@
       <file name="error-handler.js" path="/home/grimroot/Desktop/8voSemestre/Pruebas-Proyecto-1P/src/middleware/error-handler.js">
         <metrics statements="10" coveredstatements="10" conditionals="8" coveredconditionals="8" methods="2" coveredmethods="2"/>
         <line num="2" count="1" type="stmt"/>
-        <line num="6" count="42" type="cond" truecount="2" falsecount="0"/>
-        <line num="8" count="41" type="cond" truecount="2" falsecount="0"/>
-        <line num="9" count="37" type="stmt"/>
+        <line num="6" count="41" type="cond" truecount="2" falsecount="0"/>
+        <line num="8" count="40" type="cond" truecount="2" falsecount="0"/>
+        <line num="9" count="36" type="stmt"/>
         <line num="12" count="4" type="cond" truecount="2" falsecount="0"/>
         <line num="13" count="2" type="stmt"/>
         <line num="16" count="2" type="cond" truecount="2" falsecount="0"/>
