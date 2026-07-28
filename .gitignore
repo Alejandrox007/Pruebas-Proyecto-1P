@@ -7,7 +7,7 @@ client/.angular/
 .scannerwork/
 .env
 .env.*
-!.env.example
+.env.example
 test-logs.json
 *.log
 *.zip
