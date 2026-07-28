@@ -1,4 +1,5 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/**/*.js": {
       "includeFiles": "../client/dist/**"
@@ -9,5 +10,8 @@
       "source": "/(.*)",
       "destination": "/api/index.js"
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": false
+  }
 }
