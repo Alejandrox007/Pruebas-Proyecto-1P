@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "build": "npm ci --prefix client && npm run build --prefix client",
+    "build": "npm ci --prefix client --include=dev && npm run build --prefix client",
     "db:migrate": "node scripts/migrate.js",
     "test": "jest --runInBand --detectOpenHandles",
     "test:coverage": "jest --runInBand --coverage",
@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/jest": "^30.0.0",
     "eslint": "^10.7.0",
     "globals": "^17.6.0",
     "jest": "^30.4.2",
@@ -59,7 +60,11 @@
         "statements": 100
       }
     },
-    "coveragePathIgnorePatterns": ["/node_modules/", "/test/", "src/database/"],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/",
+      "src/database/"
+    ],
     "collectCoverageFrom": [
       "src/**/*.js",
       "!src/database/**"

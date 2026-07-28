@@ -20,13 +20,20 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="appointment-date">Fecha y hora</label>
-          <input id="appointment-date" type="datetime-local" step="1800" formControlName="scheduledAt">
+          <label for="appointment-date">Fecha</label>
+          <input id="appointment-date" type="date" [min]="minDate" [value]="selectedDate" (change)="onDateChange($event)">
+        </div>
+        <div class="form-group">
+          <label for="appointment-time">Hora</label>
+          <select id="appointment-time" [value]="selectedTime" (change)="onTimeChange($event)">
+            <option value="">Selecciona hora</option>
+            <option *ngFor="let slot of getFilteredTimeSlots()" [value]="slot">{{ slot }}</option>
+          </select>
         </div>
       </div>
       <div class="form-group">
         <label for="reason">Motivo</label>
-        <textarea id="reason" formControlName="reason" maxlength="500"></textarea>
+        <textarea id="reason" formControlName="reason" maxlength="500" (input)="onReasonInput($event)"></textarea>
       </div>
       <button class="btn btn-primary" type="submit">Agendar</button>
     </form>
