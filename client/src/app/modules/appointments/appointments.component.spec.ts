@@ -1,5 +1,6 @@
 import { FormBuilder } from '@angular/forms';
 import { of, throwError } from 'rxjs';
+import { vi } from 'vitest';
 import { AppointmentsComponent } from './appointments.component';
 
 describe('AppointmentsComponent', () => {
